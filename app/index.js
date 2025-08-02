@@ -1,10 +1,13 @@
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { useRef } from "react";
+
 import {
   Animated,
   Dimensions,
   Image,
-  SafeAreaView,
   StyleSheet,
+  TouchableOpacity
 } from "react-native";
 const { height, width } = Dimensions.get("window");
 const CARD_HEIGHT = 250;
@@ -20,9 +23,12 @@ const cards = [
 
 export default function Index() {
   const scrollY = useRef(new Animated.Value(0)).current;
-
+ const router = useRouter(); // ✅
   return (
-    <SafeAreaView style={styles.container}>
+    <LinearGradient
+      colors={["#617880ff", "#e5e8e8ff"]}
+      style={styles.container}
+    >
       <Animated.FlatList
         data={cards}
         keyExtractor={(item) => item.id}
@@ -44,48 +50,56 @@ export default function Index() {
 
           const scale = scrollY.interpolate({
             inputRange,
-            outputRange: [0.8, 1.15, 0.8], // more zoom effect
+            outputRange: [0.8, 1.15, 0.8],
             extrapolate: "clamp",
           });
 
           const opacity = scrollY.interpolate({
             inputRange,
-            outputRange: [0.4, 1, 0.4], // dim non-focused cards
+            outputRange: [0.4, 1, 0.4],
             extrapolate: "clamp",
           });
 
           return (
-            <Animated.View
-              style={[
-                styles.card,
-                {
-                  transform: [{ scale }],
-                  opacity,
-                },
-              ]}
+             <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: "/cardDetails",
+                  params: { id: item.id },
+                })
+              }
             >
-              <Image
-                source={item.image}
-                style={styles.cardImage}
-                resizeMode="contain"
-              />
-            </Animated.View>
+              <Animated.View
+                style={[
+                  styles.card,
+                  {
+                    transform: [{ scale }],
+                    opacity,
+                  },
+                ]}
+              >
+                <Image
+                  source={item.image}
+                  style={styles.cardImage}
+                  resizeMode="contain"
+                />
+              </Animated.View>
+            </TouchableOpacity>
           );
         }}
       />
-    </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgba(108, 108, 108, 0.58)",
   },
   card: {
     height: CARD_HEIGHT,
     width: width - 60,
-    marginVertical: SPACING / 1.5,
+    marginVertical: SPACING / 2,
     alignSelf: "center",
     borderRadius: 16,
     backgroundColor: "rgba(3, 62, 15, 0)",
@@ -96,16 +110,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 3 },
     elevation: 5,
-  },
-  cardTitle: {
-    fontSize: 18,
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  cardBalance: {
-    fontSize: 24,
-    color: "#aaa",
-    fontWeight: "600",
   },
   cardImage: {
     width: "100%",
