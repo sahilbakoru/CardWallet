@@ -2,22 +2,20 @@ import { useRef } from "react";
 import {
   Animated,
   Dimensions,
+  Image,
   SafeAreaView,
   StyleSheet,
-  Text
 } from "react-native";
-
 const { height, width } = Dimensions.get("window");
 const CARD_HEIGHT = 250;
 const SPACING = 20;
 const FULL_CARD_HEIGHT = CARD_HEIGHT + SPACING;
 
 const cards = [
-  { id: "1", name: "Visa Classic", balance: "$2,500" },
-  { id: "2", name: "MasterCard Gold", balance: "$1,200" },
-  { id: "3", name: "Amex Platinum", balance: "$5,750" },
-  { id: "4", name: "RuPay Debit", balance: "$560" },
-  { id: "5", name: "Business Card", balance: "$9,999" },
+  { id: "1", image: require("../assets/cards/visa.png") },
+  { id: "2", image: require("../assets/cards/mastercard.png") },
+  { id: "3", image: require("../assets/cards/amex.png") },
+  { id: "4", image: require("../assets/cards/rupay.png") },
 ];
 
 export default function Index() {
@@ -44,18 +42,17 @@ export default function Index() {
             (index + 1) * FULL_CARD_HEIGHT,
           ];
 
-        const scale = scrollY.interpolate({
-  inputRange,
-  outputRange: [0.8, 1.15, 0.8], // more zoom effect
-  extrapolate: "clamp",
-});
+          const scale = scrollY.interpolate({
+            inputRange,
+            outputRange: [0.8, 1.15, 0.8], // more zoom effect
+            extrapolate: "clamp",
+          });
 
-const opacity = scrollY.interpolate({
-  inputRange,
-  outputRange: [0.4, 1, 0.4], // dim non-focused cards
-  extrapolate: "clamp",
-});
-
+          const opacity = scrollY.interpolate({
+            inputRange,
+            outputRange: [0.4, 1, 0.4], // dim non-focused cards
+            extrapolate: "clamp",
+          });
 
           return (
             <Animated.View
@@ -67,8 +64,11 @@ const opacity = scrollY.interpolate({
                 },
               ]}
             >
-              <Text style={styles.cardTitle}>{item.name}</Text>
-              <Text style={styles.cardBalance}>{item.balance}</Text>
+              <Image
+                source={item.image}
+                style={styles.cardImage}
+                resizeMode="contain"
+              />
             </Animated.View>
           );
         }}
@@ -80,21 +80,21 @@ const opacity = scrollY.interpolate({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgba(195, 215, 225, 1)",
+    backgroundColor: "rgba(108, 108, 108, 0.58)",
   },
   card: {
     height: CARD_HEIGHT,
     width: width - 60,
-    marginVertical: SPACING / 2,
+    marginVertical: SPACING / 1.5,
     alignSelf: "center",
     borderRadius: 16,
-    backgroundColor: "#222",
-    padding: 20,
+    backgroundColor: "rgba(3, 62, 15, 0)",
+    padding: 0,
     justifyContent: "space-between",
-    shadowColor: "#000",
+    shadowColor: "rgba(64, 64, 64, 0.53)",
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
+    shadowOffset: { width: 0, height: 3 },
     elevation: 5,
   },
   cardTitle: {
@@ -106,5 +106,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "#aaa",
     fontWeight: "600",
+  },
+  cardImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 16,
   },
 });
