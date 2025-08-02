@@ -1,13 +1,14 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useRef } from "react";
-
 import {
   Animated,
   Dimensions,
   Image,
   StyleSheet,
-  TouchableOpacity
+  Text,
+  TouchableOpacity,
+  Vibration
 } from "react-native";
 const { height, width } = Dimensions.get("window");
 const CARD_HEIGHT = 250;
@@ -19,6 +20,7 @@ const cards = [
   { id: "2", image: require("../assets/cards/mastercard.png") },
   { id: "3", image: require("../assets/cards/amex.png") },
   { id: "4", image: require("../assets/cards/rupay.png") },
+  {id: '5',image: require("../assets/cards/amexBlack.png")  }
 ];
 
 export default function Index() {
@@ -26,9 +28,21 @@ export default function Index() {
  const router = useRouter(); // ✅
   return (
     <LinearGradient
-      colors={["#617880ff", "#e5e8e8ff"]}
+      colors={["#617880ff", "#e5e8e8ff","#5a737bff"]}
       style={styles.container}
     >
+       <TouchableOpacity
+      style={styles.addButton}
+      onPress={() => {
+  //  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+Vibration.vibrate(60);
+
+        // You'll open modal here later
+        console.log("Add document pressed");
+      }}
+    >
+     <Text style={{ fontSize: 40 }}>+</Text>
+    </TouchableOpacity>
       <Animated.FlatList
         data={cards}
         keyExtractor={(item) => item.id}
@@ -114,6 +128,31 @@ const styles = StyleSheet.create({
   cardImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 16,
+    borderRadius: 20,
+    overflow: 'hidden'
   },
+ addButton: {
+  position: "absolute",
+  bottom: 60,               
+  alignSelf: "center",         
+  width: 69,
+  height: 69,
+  borderRadius: 60,
+  backgroundColor: "#617880d7",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 10,
+  shadowColor: "#000",
+  shadowOpacity: 0.7,
+  shadowOffset: { width: 0, height: 4 },
+  shadowRadius: 60,
+  // elevation: 1,
+},
+addIcon: {
+  width: 24,
+  height: 24,
+  tintColor: "#333",         // Dark icon
+},
+
+
 });
