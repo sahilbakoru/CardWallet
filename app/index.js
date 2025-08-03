@@ -1,14 +1,16 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
   Image,
+  Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
-  Vibration
+  Vibration,
+  View
 } from "react-native";
 const { height, width } = Dimensions.get("window");
 const CARD_HEIGHT = 250;
@@ -18,25 +20,87 @@ const FULL_CARD_HEIGHT = CARD_HEIGHT + SPACING;
 const cards = [
   { id: "1", image: require("../assets/cards/visa.png") },
   { id: "2", image: require("../assets/cards/mastercard.png") },
-  { id: "3", image: require("../assets/cards/amex.png") },
-  { id: "4", image: require("../assets/cards/rupay.png") },
-  {id: '5',image: require("../assets/cards/amexBlack.png")  }
+   {id: '3',image: require("../assets/cards/amexBlack.png") },
+  { id: "4", image: require("../assets/cards/amex.png") },
+  { id: "5", image: require("../assets/cards/rupay.png") }
+  
 ];
 
 export default function Index() {
+  const [modalVisible, setModalVisible] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
  const router = useRouter(); // ✅
+
+
   return (
+    
     <LinearGradient
       colors={["#617880ff", "#e5e8e8ff","#5a737bff"]}
       style={styles.container}
     >
+{modalVisible && (
+  <Modal
+    visible={modalVisible}
+    transparent
+    animationType="slide"
+    onRequestClose={() => setModalVisible(false)}
+  >
+    <View style={styles.modalContainer}>
+      <TouchableOpacity
+        style={styles.modalBackdrop}
+        activeOpacity={1}
+        onPress={() => setModalVisible(false)}
+      />
+
+      <View style={styles.bottomSheet}>
+        <View style={styles.dragIndicator} />
+        
+        <TouchableOpacity
+          style={styles.bigButton}
+          onPress={() => {
+            setModalVisible(false);
+            console.log("Take Photo");
+          }}
+        >
+          <Text style={styles.bigButtonText}>📷 Scan Document</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.bigButton}
+          onPress={() => {
+            setModalVisible(false);
+            console.log("Choose from Gallery");
+          }}
+        >
+          <Text style={styles.bigButtonText}>🖼️ Choose Photo</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.bigButton}
+          onPress={() => {
+            setModalVisible(false);
+            console.log("Custom");
+          }}
+        >
+          <Text style={styles.bigButtonText}>📝 Enter manually</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setModalVisible(false)}>
+          <Text style={styles.cancelText}>Cancel</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </Modal>
+)}
+
+
+
        <TouchableOpacity
       style={styles.addButton}
       onPress={() => {
   //  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 Vibration.vibrate(60);
-
+setModalVisible(true)
         // You'll open modal here later
         console.log("Add document pressed");
       }}
@@ -76,13 +140,15 @@ Vibration.vibrate(60);
 
           return (
              <TouchableOpacity
-              onPress={() =>
+              onPress={() =>{
                 router.push({
                   pathname: "/cardDetails",
                   params: { id: item.id },
                 })
+                Vibration.vibrate(60)}
               }
             >
+
               <Animated.View
                 style={[
                   styles.card,
@@ -153,6 +219,67 @@ addIcon: {
   height: 24,
   tintColor: "#333",         // Dark icon
 },
+modalContainer: {
+  flex: 1,
+  justifyContent: "flex-end",
+  backgroundColor: "rgba(0, 0, 0, 0)", // transparent upper area
+},
+
+modalBackdrop: {
+  flex: 1, // this allows tap to dismiss modal
+},
+
+bottomSheet: {
+  margin:15,
+  backgroundColor: "#e5e8e8ff",
+  paddingTop: 16,
+  paddingBottom: 30,
+  paddingHorizontal: 20,
+  borderTopLeftRadius: 24,
+  borderTopRightRadius: 24,
+  borderBottomEndRadius:24,
+  borderBottomStartRadius:24,
+  elevation: 5,
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: -2 },
+  shadowOpacity: 0.2,
+  shadowRadius: 6,
+},
+
+dragIndicator: {
+  width: 40,
+  height: 5,
+  borderRadius: 3,
+  backgroundColor: "#ccc",
+  alignSelf: "center",
+  marginBottom: 20,
+},
+
+bigButton: {
+  backgroundColor: "#617880",
+  width: "100%",
+  paddingVertical: 18,
+  paddingHorizontal:15,
+  borderRadius: 14,
+  alignItems: "left",
+  marginBottom: 14,
+},
+
+bigButtonText: {
+  color: "white",
+  fontSize: 18,
+  fontWeight: "600",
+  
+},
+
+cancelText: {
+  marginTop: 8,
+  color: "red",
+  fontSize: 16,
+  fontWeight: "500",
+  textAlign: "center",
+},
+
 
 
 });
