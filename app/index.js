@@ -152,7 +152,7 @@ setModalVisible(true)
         console.log("Add document pressed");
       }}
     >
-     <Text style={{ fontSize: 40 }}>+</Text>
+     <Text style={{fontSize: 40, color:'rgba(173, 172, 172, 1)'  }}>+</Text>
     </TouchableOpacity>
       <Animated.FlatList
         data={cards}
@@ -265,9 +265,11 @@ const styles = StyleSheet.create({
   // elevation: 1,
 },
 addIcon: {
+
   width: 24,
   height: 24,
-  tintColor: "#333",         // Dark icon
+  tintColor: "rgba(255, 255, 255, 1)",         
+  color: "rgba(255, 255, 255, 1)",  
 },
 modalContainer: {
   flex: 1,
