@@ -7,6 +7,7 @@ import {
   Animated,
   Dimensions,
   Image,
+  ImageBackground,
   Modal,
   StyleSheet,
   Text,
@@ -14,6 +15,7 @@ import {
   Vibration,
   View
 } from "react-native";
+import { pickImage } from './GalleryInput';
 const { height, width } = Dimensions.get("window");
 const CARD_HEIGHT = 230;
 const SPACING = 20;
@@ -30,6 +32,8 @@ const FULL_CARD_HEIGHT = CARD_HEIGHT + SPACING;
 
 export default function Index() {
   const [modalVisible, setModalVisible] = useState(false);
+
+
   const [cards, setCards] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current;
  const router = useRouter(); // ✅
@@ -53,10 +57,14 @@ useFocusEffect(
 );
 
   return (
-    
+    <ImageBackground
+  source={require('../assets/Backround/backround.png')}
+  style={styles.backgroundImage}
+  resizeMode="cover"
+>
     <LinearGradient
-      colors={["#617880ff", "#e5e8e8ff","#5a737bff"]}
-      style={styles.container}
+      colors={["rgba(0, 0, 0, 0.78)", "rgba(75, 75, 75, 0.7)"]}
+      style={styles.gradient}
     >
 {modalVisible && (
   <Modal
@@ -86,15 +94,33 @@ useFocusEffect(
           <Text style={styles.bigButtonText}>📷 Scan Document</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.bigButton}
-          onPress={() => {
-            setModalVisible(false);
-            console.log("Choose from Gallery");
-          }}
-        >
-          <Text style={styles.bigButtonText}>🖼️ Choose Photo</Text>
-        </TouchableOpacity>
+<TouchableOpacity
+  style={styles.bigButton}
+  onPress={async () => {
+    setModalVisible(false);
+    await pickImage(async (uri) => {
+      const newDoc = {
+        id: Date.now().toString(),
+        frontImage: uri,
+        backImage: null,
+      };
+
+      try {
+        const existing = await AsyncStorage.getItem("documents");
+        const parsed = existing ? JSON.parse(existing) : [];
+        const updated = [...parsed, newDoc];
+
+        await AsyncStorage.setItem("documents", JSON.stringify(updated));
+        setCards(updated); // update state to show instantly
+      } catch (e) {
+        console.error("Failed to save document from gallery:", e);
+      }
+    });
+  }}
+>
+  <Text style={styles.bigButtonText}>🖼️ Choose Photo</Text>
+</TouchableOpacity>
+
 
         <TouchableOpacity
           style={styles.bigButton}
@@ -190,6 +216,8 @@ setModalVisible(true)
         }}
       />
     </LinearGradient>
+
+    </ImageBackground>
   );
 }
 
@@ -203,7 +231,7 @@ const styles = StyleSheet.create({
     marginVertical: SPACING / 2,
     alignSelf: "center",
     borderRadius: 16,
-    backgroundColor: "#617880d7",
+    backgroundColor: "#000000bc",
     padding: 0,
     justifyContent: "space-between",
     shadowColor: "rgba(64, 64, 64, 0.53)",
@@ -226,7 +254,7 @@ const styles = StyleSheet.create({
   width: 69,
   height: 69,
   borderRadius: 60,
-  backgroundColor: "#617880d7",
+  backgroundColor: "rgba(75, 75, 75, 0.7)",
   alignItems: "center",
   justifyContent: "center",
   zIndex: 10,

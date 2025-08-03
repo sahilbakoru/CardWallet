@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Button, Image, StyleSheet, Text, View } from "react-native";
-
+import { Alert, Button, Image, ImageBackground, StyleSheet, Text, View } from "react-native";
 export default function CardDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -51,6 +51,15 @@ export default function CardDetails() {
   if (!card) return <Text>Loading...</Text>;
 
   return (
+    <ImageBackground
+  source={require("../assets/Backround/backround.png")}
+  style={styles.backgroundImage}
+  resizeMode="cover"
+>
+  <LinearGradient
+    colors={["rgba(0, 0, 0, 0.78)", "rgba(75, 75, 75, 0.7)"]}
+    style={styles.gradientOverlay}
+  >
     <View style={styles.container}>
       {card.frontImage && (
         <Image source={{ uri: card.frontImage }} style={styles.image} />
@@ -61,16 +70,24 @@ export default function CardDetails() {
       <Text style={styles.text}>Card ID: {id}</Text>
       <Button title="Delete Card" color="red" onPress={handleDelete} />
     </View>
+  </LinearGradient>
+</ImageBackground>
+
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+  },
+  gradientOverlay: {
+    flex: 1,
+    padding: 16,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f6f6f6",
     alignItems: "center",
     justifyContent: "center",
-    padding: 16,
   },
   image: {
     width: "100%",
@@ -81,5 +98,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     marginBottom: 24,
+    color: "white",
   },
 });
