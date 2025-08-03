@@ -1,6 +1,8 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -13,24 +15,42 @@ import {
   View
 } from "react-native";
 const { height, width } = Dimensions.get("window");
-const CARD_HEIGHT = 250;
+const CARD_HEIGHT = 230;
 const SPACING = 20;
 const FULL_CARD_HEIGHT = CARD_HEIGHT + SPACING;
 
-const cards = [
-  { id: "1", image: require("../assets/cards/visa.png") },
-  { id: "2", image: require("../assets/cards/mastercard.png") },
-   {id: '3',image: require("../assets/cards/amexBlack.png") },
-  { id: "4", image: require("../assets/cards/amex.png") },
-  { id: "5", image: require("../assets/cards/rupay.png") }
+// const cards = [
+//   { id: "1", image: require("../assets/cards/visa.png") },
+//   { id: "2", image: require("../assets/cards/mastercard.png") },
+//    {id: '3',image: require("../assets/cards/amexBlack.png") },
+//   { id: "4", image: require("../assets/cards/amex.png") },
+//   { id: "5", image: require("../assets/cards/rupay.png") }
   
-];
+// ];
 
 export default function Index() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [cards, setCards] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current;
  const router = useRouter(); // ✅
 
+useFocusEffect(
+  React.useCallback(() => {
+    const loadCards = async () => {
+      try {
+        const stored = await AsyncStorage.getItem("documents");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          setCards(parsed);
+        }
+      } catch (e) {
+        console.error("Failed to load documents:", e);
+      }
+    };
+
+    loadCards();
+  }, [])
+);
 
   return (
     
@@ -59,6 +79,7 @@ export default function Index() {
           style={styles.bigButton}
           onPress={() => {
             setModalVisible(false);
+             router.push({pathname:"/ScanDocInput"});
             console.log("Take Photo");
           }}
         >
@@ -82,7 +103,7 @@ export default function Index() {
             console.log("Custom");
           }}
         >
-          <Text style={styles.bigButtonText}>📝 Enter manually</Text>
+          <Text style={styles.bigButtonText}>📝 Enter Manually</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setModalVisible(false)}>
@@ -159,9 +180,9 @@ setModalVisible(true)
                 ]}
               >
                 <Image
-                  source={item.image}
+                  source={{ uri: item.frontImage }}
                   style={styles.cardImage}
-                  resizeMode="contain"
+                  resizeMode="cover"
                 />
               </Animated.View>
             </TouchableOpacity>
@@ -182,7 +203,7 @@ const styles = StyleSheet.create({
     marginVertical: SPACING / 2,
     alignSelf: "center",
     borderRadius: 16,
-    backgroundColor: "rgba(3, 62, 15, 0)",
+    backgroundColor: "#617880d7",
     padding: 0,
     justifyContent: "space-between",
     shadowColor: "rgba(64, 64, 64, 0.53)",
@@ -194,8 +215,9 @@ const styles = StyleSheet.create({
   cardImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 20,
-    overflow: 'hidden'
+    borderRadius: 18,
+    overflow: "hidden"
+    
   },
  addButton: {
   position: "absolute",
@@ -256,7 +278,7 @@ dragIndicator: {
 },
 
 bigButton: {
-  backgroundColor: "#617880",
+  backgroundColor: "#e5e8e8ff",
   width: "100%",
   paddingVertical: 18,
   paddingHorizontal:15,
@@ -266,16 +288,16 @@ bigButton: {
 },
 
 bigButtonText: {
-  color: "white",
+  color: "#617880",
   fontSize: 18,
   fontWeight: "600",
   
 },
 
 cancelText: {
-  marginTop: 8,
+  marginTop: 35,
   color: "red",
-  fontSize: 16,
+  fontSize: 18,
   fontWeight: "500",
   textAlign: "center",
 },
