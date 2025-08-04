@@ -1,3 +1,4 @@
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -91,8 +92,12 @@ export default function Index() {
                     console.log("Take Photo");
                   }}
                 >
-                  <Text style={styles.bigButtonText}>📷 Scan Document</Text>
+                  <View style={styles.bigButtonContent}>
+                    <MaterialIcons name="document-scanner" size={24} color="black" style={{ marginRight: 10 }} />
+                    <Text style={styles.bigButtonText}>Scan Document</Text>
+                  </View>
                 </TouchableOpacity>
+
 
                 <TouchableOpacity
                   style={styles.bigButton}
@@ -118,9 +123,11 @@ export default function Index() {
                     });
                   }}
                 >
-                  <Text style={styles.bigButtonText}>🖼️ Choose Photo</Text>
+                  <View style={styles.bigButtonContent}>
+                    <MaterialIcons name="add-photo-alternate" size={24} color="black" style={{ marginRight: 10 }} />
+                    <Text style={styles.bigButtonText}>Choose Photo</Text>
+                  </View>
                 </TouchableOpacity>
-
 
                 <TouchableOpacity
                   style={styles.bigButton}
@@ -129,8 +136,12 @@ export default function Index() {
                     router.push("/ManualInput");
                   }}
                 >
-                  <Text style={styles.bigButtonText}>📝 Enter Manually</Text>
+                  <View style={styles.bigButtonContent}>
+                    <Feather name="edit" size={24} color="black" style={{ marginRight: 10 }} />
+                    <Text style={styles.bigButtonText}>Enter Manually</Text>
+                  </View>
                 </TouchableOpacity>
+
 
                 <TouchableOpacity onPress={() => setModalVisible(false)}>
                   <Text style={styles.cancelText}>Cancel</Text>
@@ -246,7 +257,7 @@ export default function Index() {
                           {item?.title || "Untitled"}
                         </Text>
 
-                        {item.fields.slice(0,2)?.map((field, index) => (
+                        {item.fields.slice(0, 2)?.map((field, index) => (
                           <View key={`field-${index}-${item.timestamp}`}>
                             <Text
                               style={{
@@ -376,16 +387,20 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 15,
     borderRadius: 14,
-    alignItems: "left",
-    marginBottom: 14,
+    alignItems: "flex-start", // still aligns left
+  },
+
+  bigButtonContent: {
+    flexDirection: "row",
+    alignItems: "center", // <-- makes icon & text vertically centered
   },
 
   bigButtonText: {
     color: "#617880",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "600",
-
   },
+
 
   cancelText: {
     marginTop: 35,
