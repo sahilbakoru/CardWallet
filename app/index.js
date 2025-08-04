@@ -203,7 +203,6 @@ export default function Index() {
                     pathname: "/cardDetails",
                     params: { id: item.id },
                   });
-                  Vibration.vibrate(60);
                 }}
               >
                 <Animated.View
