@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Animated,
   Dimensions,
   Image,
@@ -34,6 +35,7 @@ const FULL_CARD_HEIGHT = CARD_HEIGHT + SPACING;
 export default function Index() {
   const [modalVisible, setModalVisible] = useState(false);
 
+const [isGalleryOpening, setIsGalleryOpening] = useState(false);
 
   const [cards, setCards] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -67,6 +69,26 @@ export default function Index() {
         colors={["rgba(79, 65, 47, 0.7)", "rgba(48, 81, 96, 0.55)", "rgba(75, 49, 70, 0.78)",]}
         style={styles.container}
       >
+        {isGalleryOpening && (
+  <Modal transparent animationType="fade">
+    <View style={{
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
+      <View style={{
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 10
+      }}>
+        <Text style={{ marginBottom: 10 }}>Opening Gallery...</Text>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    </View>
+  </Modal>
+)}
+
         {modalVisible && (
           <Modal
             visible={modalVisible}
@@ -103,7 +125,9 @@ export default function Index() {
                   style={styles.bigButton}
                   onPress={async () => {
                     setModalVisible(false);
+                     setIsGalleryOpening(true);
                     await pickImage(async (uri) => {
+                     
                       const newDoc = {
                         id: Date.now().toString(),
                         frontImage: uri,
@@ -121,6 +145,7 @@ export default function Index() {
                         console.error("Failed to save document from gallery:", e);
                       }
                     });
+                     setIsGalleryOpening(false);
                   }}
                 >
                   <View style={styles.bigButtonContent}>
