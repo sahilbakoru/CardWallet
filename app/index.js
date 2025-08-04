@@ -198,6 +198,7 @@ export default function Index() {
 
             return (
               <TouchableOpacity
+              activeOpacity={0.8}
                 onPress={() => {
                   router.push({
                     pathname: "/cardDetails",

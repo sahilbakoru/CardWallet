@@ -63,7 +63,7 @@ const triggerFlip = () => {
 
   Animated.timing(flipAnim, {
     toValue,
-    duration: 600,
+    duration: 800,
     easing: Easing.inOut(Easing.ease),
     useNativeDriver: true,
   }).start();
