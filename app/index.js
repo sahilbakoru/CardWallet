@@ -27,7 +27,7 @@ const FULL_CARD_HEIGHT = CARD_HEIGHT + SPACING;
 //    {id: '3',image: require("../assets/cards/amexBlack.png") },
 //   { id: "4", image: require("../assets/cards/amex.png") },
 //   { id: "5", image: require("../assets/cards/rupay.png") }
-  
+
 // ];
 
 export default function Index() {
@@ -36,186 +36,249 @@ export default function Index() {
 
   const [cards, setCards] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current;
- const router = useRouter(); // ✅
-
-useFocusEffect(
-  React.useCallback(() => {
-    const loadCards = async () => {
-      try {
-        const stored = await AsyncStorage.getItem("documents");
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          setCards(parsed);
+  const router = useRouter(); // ✅
+  const backgroundImage = require("../assets/Backround/CardBackround.png");
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadCards = async () => {
+        try {
+          const stored = await AsyncStorage.getItem("documents");
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setCards(parsed);
+          }
+        } catch (e) {
+          console.error("Failed to load documents:", e);
         }
-      } catch (e) {
-        console.error("Failed to load documents:", e);
-      }
-    };
+      };
 
-    loadCards();
-  }, [])
-);
+      loadCards();
+    }, [])
+  );
 
   return (
     <ImageBackground
-  source={require('../assets/Backround/backround.png')}
-  style={styles.backgroundImage}
-  resizeMode="cover"
->
-    <LinearGradient
-      colors={["rgba(0, 0, 0, 0.78)", "rgba(75, 75, 75, 0.7)"]}
-      style={styles.gradient}
+      source={require('../assets/Backround/backround.png')}
+      style={styles.container}
+      resizeMode="cover"
     >
-{modalVisible && (
-  <Modal
-    visible={modalVisible}
-    transparent
-    animationType="slide"
-    onRequestClose={() => setModalVisible(false)}
-  >
-    <View style={styles.modalContainer}>
-      <TouchableOpacity
-        style={styles.modalBackdrop}
-        activeOpacity={1}
-        onPress={() => setModalVisible(false)}
-      />
+      <LinearGradient
+        colors={["rgba(79, 65, 47, 0.7)", "rgba(48, 81, 96, 0.55)", "rgba(75, 49, 70, 0.78)",]}
+        style={styles.container}
+      >
+        {modalVisible && (
+          <Modal
+            visible={modalVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <TouchableOpacity
+                style={styles.modalBackdrop}
+                activeOpacity={1}
+                onPress={() => setModalVisible(false)}
+              />
 
-      <View style={styles.bottomSheet}>
-        <View style={styles.dragIndicator} />
-        
-        <TouchableOpacity
-          style={styles.bigButton}
-          onPress={() => {
-            setModalVisible(false);
-             router.push({pathname:"/ScanDocInput"});
-            console.log("Take Photo");
-          }}
-        >
-          <Text style={styles.bigButtonText}>📷 Scan Document</Text>
-        </TouchableOpacity>
+              <View style={styles.bottomSheet}>
+                <View style={styles.dragIndicator} />
 
-<TouchableOpacity
-  style={styles.bigButton}
-  onPress={async () => {
-    setModalVisible(false);
-    await pickImage(async (uri) => {
-      const newDoc = {
-        id: Date.now().toString(),
-        frontImage: uri,
-        backImage: null,
-      };
+                <TouchableOpacity
+                  style={styles.bigButton}
+                  onPress={() => {
+                    setModalVisible(false);
+                    router.push({ pathname: "/ScanDocInput" });
+                    console.log("Take Photo");
+                  }}
+                >
+                  <Text style={styles.bigButtonText}>📷 Scan Document</Text>
+                </TouchableOpacity>
 
-      try {
-        const existing = await AsyncStorage.getItem("documents");
-        const parsed = existing ? JSON.parse(existing) : [];
-        const updated = [...parsed, newDoc];
+                <TouchableOpacity
+                  style={styles.bigButton}
+                  onPress={async () => {
+                    setModalVisible(false);
+                    await pickImage(async (uri) => {
+                      const newDoc = {
+                        id: Date.now().toString(),
+                        frontImage: uri,
+                        backImage: null,
+                      };
 
-        await AsyncStorage.setItem("documents", JSON.stringify(updated));
-        setCards(updated); // update state to show instantly
-      } catch (e) {
-        console.error("Failed to save document from gallery:", e);
-      }
-    });
-  }}
->
-  <Text style={styles.bigButtonText}>🖼️ Choose Photo</Text>
-</TouchableOpacity>
+                      try {
+                        const existing = await AsyncStorage.getItem("documents");
+                        const parsed = existing ? JSON.parse(existing) : [];
+                        const updated = [...parsed, newDoc];
 
-
-        <TouchableOpacity
-          style={styles.bigButton}
-          onPress={() => {
-            setModalVisible(false);
-            console.log("Custom");
-          }}
-        >
-          <Text style={styles.bigButtonText}>📝 Enter Manually</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => setModalVisible(false)}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </Modal>
-)}
+                        await AsyncStorage.setItem("documents", JSON.stringify(updated));
+                        setCards(updated); // update state to show instantly
+                      } catch (e) {
+                        console.error("Failed to save document from gallery:", e);
+                      }
+                    });
+                  }}
+                >
+                  <Text style={styles.bigButtonText}>🖼️ Choose Photo</Text>
+                </TouchableOpacity>
 
 
+                <TouchableOpacity
+                  style={styles.bigButton}
+                  onPress={() => {
+                    setModalVisible(false);
+                    router.push("/ManualInput");
+                  }}
+                >
+                  <Text style={styles.bigButtonText}>📝 Enter Manually</Text>
+                </TouchableOpacity>
 
-       <TouchableOpacity
-      style={styles.addButton}
-      onPress={() => {
-  //  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-Vibration.vibrate(60);
-setModalVisible(true)
-        // You'll open modal here later
-        console.log("Add document pressed");
-      }}
-    >
-     <Text style={{fontSize: 40, color:'rgba(173, 172, 172, 1)'  }}>+</Text>
-    </TouchableOpacity>
-      <Animated.FlatList
-        data={cards}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingVertical: (height - CARD_HEIGHT) / 2,
-        }}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
+                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         )}
-        scrollEventThrottle={16}
-        renderItem={({ item, index }) => {
-          const inputRange = [
-            (index - 1) * FULL_CARD_HEIGHT,
-            index * FULL_CARD_HEIGHT,
-            (index + 1) * FULL_CARD_HEIGHT,
-          ];
 
-          const scale = scrollY.interpolate({
-            inputRange,
-            outputRange: [0.8, 1.15, 0.8],
-            extrapolate: "clamp",
-          });
 
-          const opacity = scrollY.interpolate({
-            inputRange,
-            outputRange: [0.4, 1, 0.4],
-            extrapolate: "clamp",
-          });
 
-          return (
-             <TouchableOpacity
-              onPress={() =>{
-                router.push({
-                  pathname: "/cardDetails",
-                  params: { id: item.id },
-                })
-                Vibration.vibrate(60)}
-              }
-            >
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => {
+            //  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            Vibration.vibrate(60);
+            setModalVisible(true)
+            // You'll open modal here later
+            console.log("Add document pressed");
+          }}
+        >
+          <Text style={{ fontSize: 40, color: 'rgba(173, 172, 172, 1)' }}>+</Text>
+        </TouchableOpacity>
+        <Animated.FlatList
+          data={cards}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingVertical: (height - CARD_HEIGHT) / 2,
+          }}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          scrollEventThrottle={16}
+          renderItem={({ item, index }) => {
+            const inputRange = [
+              (index - 1) * FULL_CARD_HEIGHT,
+              index * FULL_CARD_HEIGHT,
+              (index + 1) * FULL_CARD_HEIGHT,
+            ];
 
-              <Animated.View
-                style={[
-                  styles.card,
-                  {
-                    transform: [{ scale }],
-                    opacity,
-                  },
-                ]}
+            const scale = scrollY.interpolate({
+              inputRange,
+              outputRange: [0.8, 1.15, 0.8],
+              extrapolate: "clamp",
+            });
+
+            const opacity = scrollY.interpolate({
+              inputRange,
+              outputRange: [0.4, 1, 0.4],
+              extrapolate: "clamp",
+            });
+
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  router.push({
+                    pathname: "/cardDetails",
+                    params: { id: item.id },
+                  });
+                  Vibration.vibrate(60);
+                }}
               >
-                <Image
-                  source={{ uri: item.frontImage }}
-                  style={styles.cardImage}
-                  resizeMode="cover"
-                />
-              </Animated.View>
-            </TouchableOpacity>
-          );
-        }}
-      />
-    </LinearGradient>
+                <Animated.View
+                  style={[
+                    styles.card,
+                    {
+                      transform: [{ scale }],
+                    },
+                  ]}
+                >
+                  {item.frontImage ? (
+                    // 📷 Image-based card
+                    <Image
+                      source={{ uri: item.frontImage }}
+                      style={styles.cardImage}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    // 📝 Manual card
+                    <ImageBackground
+                      source={backgroundImage}
+                      imageStyle={{ borderRadius: 16, opacity: 1 }}
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        borderRadius: 16,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <LinearGradient
+                        colors={["#8abc7f53", "#e1857e4e", "#7fbcb853", "#c6c85b4a"]}
+                        style={{
+                          height: "100%",
+                          width: "100%",
+                          borderRadius: 16,
+                          padding: 20,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text
+                          key={`${item.id}`}
+                          style={{
+                            fontSize: 20,
+                            fontWeight: "700",
+                            color: "#000000ff",
+                            marginBottom: 12,
+                            letterSpacing: 1.2,
+                            textAlign: 'center'
+                          }}
+                        >
+                          {item?.title || "Untitled"}
+                        </Text>
+
+                        {item.fields.slice(0,2)?.map((field, index) => (
+                          <View key={`field-${index}-${item.timestamp}`}>
+                            <Text
+                              style={{
+                                fontSize: 15,
+                                fontWeight: "500",
+                                color: "#000000ff",
+                                marginBottom: 6,
+                              }}
+                            >
+                              {field.key}:{" "}
+                              <Text style={{ color: "#454545ff", fontWeight: "600" }}>
+                                {field.value}
+                              </Text>
+                            </Text>
+                          </View>
+                        ))}
+
+
+
+                      </LinearGradient>
+                    </ImageBackground>
+
+
+
+                  )}
+                </Animated.View>
+              </TouchableOpacity>
+            );
+          }}
+
+        />
+      </LinearGradient>
 
     </ImageBackground>
   );
@@ -231,10 +294,10 @@ const styles = StyleSheet.create({
     marginVertical: SPACING / 2,
     alignSelf: "center",
     borderRadius: 16,
-    backgroundColor: "#000000bc",
+    backgroundColor: "#fffefeff",
     padding: 0,
     justifyContent: "space-between",
-    shadowColor: "rgba(64, 64, 64, 0.53)",
+    shadowColor: "rgba(0, 0, 0, 1)",
     shadowOpacity: 0.3,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 3 },
@@ -243,94 +306,94 @@ const styles = StyleSheet.create({
   cardImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 18,
+    borderRadius: 16,
     overflow: "hidden"
-    
+
   },
- addButton: {
-  position: "absolute",
-  bottom: 60,               
-  alignSelf: "center",         
-  width: 69,
-  height: 69,
-  borderRadius: 60,
-  backgroundColor: "rgba(75, 75, 75, 0.7)",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 10,
-  shadowColor: "#000",
-  shadowOpacity: 0.7,
-  shadowOffset: { width: 0, height: 4 },
-  shadowRadius: 60,
-  // elevation: 1,
-},
-addIcon: {
+  addButton: {
+    position: "absolute",
+    bottom: 60,
+    alignSelf: "center",
+    width: 69,
+    height: 69,
+    borderRadius: 60,
+    backgroundColor: "rgba(75, 75, 75, 0.7)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.7,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 60,
+    // elevation: 1,
+  },
+  addIcon: {
 
-  width: 24,
-  height: 24,
-  tintColor: "rgba(255, 255, 255, 1)",         
-  color: "rgba(255, 255, 255, 1)",  
-},
-modalContainer: {
-  flex: 1,
-  justifyContent: "flex-end",
-  backgroundColor: "rgba(0, 0, 0, 0)", // transparent upper area
-},
+    width: 24,
+    height: 24,
+    tintColor: "rgba(255, 255, 255, 1)",
+    color: "rgba(255, 255, 255, 1)",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0)", // transparent upper area
+  },
 
-modalBackdrop: {
-  flex: 1, // this allows tap to dismiss modal
-},
+  modalBackdrop: {
+    flex: 1, // this allows tap to dismiss modal
+  },
 
-bottomSheet: {
-  margin:15,
-  backgroundColor: "#e5e8e8ff",
-  paddingTop: 16,
-  paddingBottom: 30,
-  paddingHorizontal: 20,
-  borderTopLeftRadius: 24,
-  borderTopRightRadius: 24,
-  borderBottomEndRadius:24,
-  borderBottomStartRadius:24,
-  elevation: 5,
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: -2 },
-  shadowOpacity: 0.2,
-  shadowRadius: 6,
-},
+  bottomSheet: {
+    margin: 15,
+    backgroundColor: "#e5e8e8ff",
+    paddingTop: 16,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderBottomEndRadius: 24,
+    borderBottomStartRadius: 24,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+  },
 
-dragIndicator: {
-  width: 40,
-  height: 5,
-  borderRadius: 3,
-  backgroundColor: "#ccc",
-  alignSelf: "center",
-  marginBottom: 20,
-},
+  dragIndicator: {
+    width: 40,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: "#ccc",
+    alignSelf: "center",
+    marginBottom: 20,
+  },
 
-bigButton: {
-  backgroundColor: "#e5e8e8ff",
-  width: "100%",
-  paddingVertical: 18,
-  paddingHorizontal:15,
-  borderRadius: 14,
-  alignItems: "left",
-  marginBottom: 14,
-},
+  bigButton: {
+    backgroundColor: "#e5e8e8ff",
+    width: "100%",
+    paddingVertical: 18,
+    paddingHorizontal: 15,
+    borderRadius: 14,
+    alignItems: "left",
+    marginBottom: 14,
+  },
 
-bigButtonText: {
-  color: "#617880",
-  fontSize: 18,
-  fontWeight: "600",
-  
-},
+  bigButtonText: {
+    color: "#617880",
+    fontSize: 18,
+    fontWeight: "600",
 
-cancelText: {
-  marginTop: 35,
-  color: "red",
-  fontSize: 18,
-  fontWeight: "500",
-  textAlign: "center",
-},
+  },
+
+  cancelText: {
+    marginTop: 35,
+    color: "red",
+    fontSize: 18,
+    fontWeight: "500",
+    textAlign: "center",
+  },
 
 
 
