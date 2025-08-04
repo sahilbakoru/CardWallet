@@ -1,3 +1,4 @@
+import { FontAwesome6 } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -14,11 +15,13 @@ import {
 } from "react-native";
 
 const { width } = Dimensions.get("window");
+// ...imports stay unchanged
 
 export default function CardDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [card, setCard] = useState(null);
+  const [isFlipped, setIsFlipped] = useState(false);
   const backgroundImage = require("../assets/Backround/CardBackround.png");
 
   useEffect(() => {
@@ -27,7 +30,6 @@ export default function CardDetails() {
         const stored = await AsyncStorage.getItem("documents");
         const parsed = stored ? JSON.parse(stored) : [];
         const found = parsed.find((doc) => doc.id === id);
-        console.log(found, "card data ")
         setCard(found);
       } catch (e) {
         console.error("Failed to load card:", e);
@@ -59,6 +61,8 @@ export default function CardDetails() {
 
   if (!card) return <Text style={{ color: "white", padding: 20 }}>Loading...</Text>;
 
+  const imageToShow = isFlipped && card.backImage ? card.backImage : card.frontImage;
+
   return (
     <ImageBackground
       source={require("../assets/Backround/backround.png")}
@@ -71,26 +75,22 @@ export default function CardDetails() {
       >
         <View style={styles.container}>
           <View style={styles.card}>
-            {card.frontImage ? (
-              <Image source={{ uri: card.frontImage }} style={styles.cardImage} />
+            {imageToShow ? (
+              <Image source={{ uri: imageToShow }} style={styles.cardImage} />
             ) : (
               <ImageBackground
                 source={backgroundImage}
-                imageStyle={{ borderRadius: 16, opacity: 1 }}
+                imageStyle={{ borderRadius: 16 }}
                 style={styles.cardBackground}
               >
                 <LinearGradient
                   colors={["#8abc7f53", "#e1857e4e", "#7fbcb853", "#c6c85b4a"]}
                   style={styles.cardContent}
                 >
-                  <Text
-                    key={`${card.id}`}
-                    style={styles.cardTitle}
-                  >
+                  <Text style={styles.cardTitle}>
                     {card.title || "Untitled"}
                   </Text>
-
-                  {card.fields?.slice(0,3).map((field, index) => (
+                  {card.fields?.slice(0, 3).map((field, index) => (
                     <View key={`field-${index}-${card.timestamp}`}>
                       <Text style={styles.cardField}>
                         {field.key}:{" "}
@@ -103,7 +103,39 @@ export default function CardDetails() {
             )}
           </View>
 
+          {card.frontImage && card.backImage && (
+            <TouchableOpacity
+  style={styles.flipButton}
+  onPress={() => setIsFlipped((prev) => !prev)}
+>
+  <View style={styles.flipButtonContent}>
+    <FontAwesome6 name="arrows-rotate" size={18} color="white" />
+    <Text style={styles.flipButtonText}>
+      {isFlipped ? "Show Front" : "Flip to Back"}
+    </Text>
+  </View>
+</TouchableOpacity>
+          )}
+
+          {/* Extra hardcoded card details */}
+          <View style={styles.detailsBox}>
+            <Text style={styles.detailsTitle}>Card Info</Text>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Type:</Text>
+              <Text style={styles.detailValue}>National ID</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Issued:</Text>
+              <Text style={styles.detailValue}>2019-07-23</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Expires:</Text>
+              <Text style={styles.detailValue}>2029-07-23</Text>
+            </View>
+          </View>
+
           <Text style={styles.text}>Card ID: {id}</Text>
+
           <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
             <Text style={styles.deleteText}>Delete Card</Text>
           </TouchableOpacity>
@@ -112,85 +144,134 @@ export default function CardDetails() {
     </ImageBackground>
   );
 }
-
 const CARD_HEIGHT = 230;
-
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
   },
   gradientOverlay: {
     flex: 1,
-    padding: 16,
+    padding: 20,
+    justifyContent: "flex-start",
   },
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    paddingTop: 40,
   },
   card: {
-    height: CARD_HEIGHT,
-    width: width - 60,
-    marginBottom: 20,
+    width: width - 32,
+    height: 230,
     borderRadius: 16,
-    backgroundColor: "#fffefeff",
-    shadowColor: "rgba(0, 0, 0, 1)",
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 5,
+    overflow: "hidden",
+    marginBottom: 24,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
   cardImage: {
     width: "100%",
     height: "100%",
     borderRadius: 16,
-    overflow: "hidden",
+    resizeMode: "cover",
   },
   cardBackground: {
-    height: "100%",
     width: "100%",
-    borderRadius: 16,
-    overflow: "hidden",
+    height: "100%",
   },
   cardContent: {
-    height: "100%",
-    width: "100%",
-    borderRadius: 16,
-    padding: 20,
+    flex: 1,
     justifyContent: "center",
+    padding: 20,
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "700",
-    color: "#000000ff",
-    marginBottom: 12,
-    letterSpacing: 1.2,
+    color: "#1d1d1d",
+    marginBottom: 10,
     textAlign: "center",
   },
   cardField: {
     fontSize: 15,
-    fontWeight: "500",
-    color: "#000000ff",
+    color: "#333",
     marginBottom: 6,
+    lineHeight: 20,
   },
   cardFieldValue: {
-    color: "#454545ff",
     fontWeight: "600",
+    color: "#444",
   },
-  text: {
+  flipButton: {
+    backgroundColor: "#f1f2f60d",
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+    borderRadius: 24,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  flipButtonText: {
     fontSize: 16,
+    fontWeight: "500",
+    color: "#ffffffff",
+  },
+  flipButtonContent: {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 8, // or use marginRight if gap isn't supported in your RN version
+},
+
+  text: {
+    fontSize: 14,
+    color: "#dcdcdc",
+    marginTop: 10,
     marginBottom: 20,
-    color: "white",
   },
   deleteButton: {
-    backgroundColor: "red",
+    backgroundColor: "#e74c3c",
     paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 8,
+    paddingHorizontal: 28,
+    borderRadius: 10,
+    marginTop: 10,
   },
   deleteText: {
-    color: "white",
+    color: "#fff",
     fontWeight: "600",
     fontSize: 16,
+  },
+  detailsBox: {
+    width: width - 40,
+    backgroundColor: "#ffffff09",
+    padding: 18,
+    borderRadius: 14,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+  },
+  detailsTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#ffffffff",
+    marginBottom: 10,
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  detailLabel: {
+    fontWeight: "600",
+    color: "#fcfcfcff",
+  },
+  detailValue: {
+    color: "#f5f5f5ff",
+    fontWeight: "500",
   },
 });
