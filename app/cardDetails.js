@@ -2,10 +2,12 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
+  Animated,
   Dimensions,
+  Easing,
   Image,
   ImageBackground,
   StyleSheet,
@@ -37,6 +39,37 @@ export default function CardDetails() {
     };
     fetchCard();
   }, [id]);
+const flipAnim = useRef(new Animated.Value(0)).current;
+const [isFront, setIsFront] = useState(true);
+const frontInterpolate = flipAnim.interpolate({
+  inputRange: [0, 180],
+  outputRange: ["0deg", "180deg"],
+});
+
+const backInterpolate = flipAnim.interpolate({
+  inputRange: [0, 180],
+  outputRange: ["180deg", "360deg"],
+});
+
+const flipToFrontStyle = {
+  transform: [{ rotateY: frontInterpolate }],
+};
+
+const flipToBackStyle = {
+  transform: [{ rotateY: backInterpolate }],
+};
+const triggerFlip = () => {
+  const toValue = isFront ? 180 : 0;
+
+  Animated.timing(flipAnim, {
+    toValue,
+    duration: 600,
+    easing: Easing.inOut(Easing.ease),
+    useNativeDriver: true,
+  }).start();
+
+  setIsFront(!isFront);
+};
 
   const handleDelete = async () => {
     Alert.alert("Delete", "Are you sure you want to delete this card?", [
@@ -63,86 +96,119 @@ export default function CardDetails() {
 
   const imageToShow = isFlipped && card.backImage ? card.backImage : card.frontImage;
 
-  return (
+return (
+  <ImageBackground
+    source={require("../assets/Backround/backround.png")}
+    style={styles.backgroundImage}
+    resizeMode="cover"
+  >
+    <LinearGradient
+      colors={["rgba(0, 0, 0, 0.78)", "rgba(75, 75, 75, 0.7)"]}
+      style={styles.gradientOverlay}
+    >
+      <View style={styles.container}>
+
+        {/* CARD IMAGE (Animated if back exists, else just front image) */}
+     <View style={[
+    styles.card,
+    { overflow: card?.backImage ? "visible" : "hidden" }
+  ]} >
+  {card.frontImage ? (
+    <>
+      {/* Front Image */}
+      <Animated.View
+        style={[styles.flipCard, flipToFrontStyle, { zIndex: isFront ? 1 : 0 }]}
+      >
+        <Image
+          source={{ uri: card.frontImage }}
+          style={styles.cardImage}
+        />
+      </Animated.View>
+
+      {/* Back Image */}
+      {card.backImage && (
+        <Animated.View
+          style={[
+            styles.flipCard,
+            styles.flipCardBack,
+            flipToBackStyle,
+            { zIndex: isFront ? 0 : 1 },
+          ]}
+        >
+          <Image
+            source={{ uri: card.backImage }}
+            style={styles.cardImage}
+          />
+        </Animated.View>
+      )}
+    </>
+  ) : (
+    // Fallback UI for manually added card (no frontImage)
     <ImageBackground
-      source={require("../assets/Backround/backround.png")}
-      style={styles.backgroundImage}
-      resizeMode="cover"
+      source={backgroundImage}
+      imageStyle={{ borderRadius: 16 }}
+      style={styles.cardBackground}
     >
       <LinearGradient
-        colors={["rgba(0, 0, 0, 0.78)", "rgba(75, 75, 75, 0.7)"]}
-        style={styles.gradientOverlay}
+        colors={["#8abc7f53", "#e1857e4e", "#7fbcb853", "#c6c85b4a"]}
+        style={styles.cardContent}
       >
-        <View style={styles.container}>
-          <View style={styles.card}>
-            {imageToShow ? (
-              <Image source={{ uri: imageToShow }} style={styles.cardImage} />
-            ) : (
-              <ImageBackground
-                source={backgroundImage}
-                imageStyle={{ borderRadius: 16 }}
-                style={styles.cardBackground}
-              >
-                <LinearGradient
-                  colors={["#8abc7f53", "#e1857e4e", "#7fbcb853", "#c6c85b4a"]}
-                  style={styles.cardContent}
-                >
-                  <Text style={styles.cardTitle}>
-                    {card.title || "Untitled"}
-                  </Text>
-                  {card.fields?.slice(0, 3).map((field, index) => (
-                    <View key={`field-${index}-${card.timestamp}`}>
-                      <Text style={styles.cardField}>
-                        {field.key}:{" "}
-                        <Text style={styles.cardFieldValue}>{field.value}</Text>
-                      </Text>
-                    </View>
-                  ))}
-                </LinearGradient>
-              </ImageBackground>
-            )}
+        <Text style={styles.cardTitle}>
+          {card.title || "Untitled"}
+        </Text>
+        {card.fields?.slice(0, 3).map((field, index) => (
+          <View key={`field-${index}-${card.timestamp}`}>
+            <Text style={styles.cardField}>
+              {field.key}:{" "}
+              <Text style={styles.cardFieldValue}>{field.value}</Text>
+            </Text>
           </View>
-
-          {card.frontImage && card.backImage && (
-            <TouchableOpacity
-  style={styles.flipButton}
-  onPress={() => setIsFlipped((prev) => !prev)}
->
-  <View style={styles.flipButtonContent}>
-    <FontAwesome6 name="arrows-rotate" size={18} color="white" />
-    <Text style={styles.flipButtonText}>
-      {isFlipped ? "Show Front" : "Flip to Back"}
-    </Text>
-  </View>
-</TouchableOpacity>
-          )}
-
-          {/* Extra hardcoded card details */}
-          <View style={styles.detailsBox}>
-            <Text style={styles.detailsTitle}>Card Info</Text>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Type:</Text>
-              <Text style={styles.detailValue}>National ID</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Issued:</Text>
-              <Text style={styles.detailValue}>2019-07-23</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Expires:</Text>
-              <Text style={styles.detailValue}>2029-07-23</Text>
-            </View>
-          </View>
-
-          <Text style={styles.text}>Card ID: {id}</Text>
-
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-            <Text style={styles.deleteText}>Delete Card</Text>
-          </TouchableOpacity>
-        </View>
+        ))}
       </LinearGradient>
     </ImageBackground>
-  );
+  )}
+</View>
+
+
+        {/* Flip button only if back image exists */}
+        {card.backImage && (
+          <TouchableOpacity style={styles.flipButton} onPress={triggerFlip}>
+            <View style={styles.flipButtonContent}>
+              <FontAwesome6 name="arrows-rotate" size={18} color="white" />
+              <Text style={styles.flipButtonText}>
+                {isFlipped ? "Show Front" : "Flip "}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+
+        {/* Card info section */}
+        <View style={styles.detailsBox}>
+          <Text style={styles.detailsTitle}>Card Info</Text>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Type:</Text>
+            <Text style={styles.detailValue}>National ID</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Issued:</Text>
+            <Text style={styles.detailValue}>2019-07-23</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Expires:</Text>
+            <Text style={styles.detailValue}>2029-07-23</Text>
+          </View>
+        </View>
+
+        <Text style={styles.text}>Card ID: {id}</Text>
+
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.deleteText}>Delete Card</Text>
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
+  </ImageBackground>
+);
+
 }
 const CARD_HEIGHT = 230;
 const styles = StyleSheet.create({
@@ -165,12 +231,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     marginBottom: 24,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
+    backgroundColor: "rgba(0, 0, 0, 0.02)",
+    // shadowColor: "#000",
+    // shadowOpacity: 0.15,
+    // shadowRadius: 12,
+    // shadowOffset: { width: 0, height: 4 },
+    // elevation: 6,
   },
   cardImage: {
     width: "100%",
@@ -274,4 +340,17 @@ const styles = StyleSheet.create({
     color: "#f5f5f5ff",
     fontWeight: "500",
   },
+  flipCard: {
+  position: "absolute",
+  width: "100%",
+  height: "100%",
+  backfaceVisibility: "hidden",
+  borderRadius: 16,
+},
+flipCardBack: {
+  position: "absolute",
+  top: 0,
+  backfaceVisibility: "hidden",
+},
+
 });
