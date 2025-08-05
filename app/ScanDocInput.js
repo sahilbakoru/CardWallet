@@ -2,12 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
   TouchableOpacity
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import FlipCard from "./components/FlipCard";
 
 export default function ScanDocInput() {
@@ -43,6 +45,8 @@ export default function ScanDocInput() {
   }, [params.front, params.back]);
 
 return (
+   <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
+        <StatusBar style="dark" />
    <LinearGradient colors={["#617880ff", "#e5e8e8ff", "#5a737bff"]} style={styles.container}>
   <Text style={styles.title}>Scan Your Document</Text>
 
@@ -120,6 +124,7 @@ onPress={async () => {
 
     )}
   </LinearGradient>
+  </SafeAreaView>
 );
 
 }

@@ -1,19 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { useState } from "react";
 import {
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PRESET_TITLES = [
   "License",
@@ -67,16 +69,18 @@ export default function ManualInput() {
   };
 
 return (
+  <SafeAreaView style={{ flex: 1,backgroundColor: 'grey'  }}>
+        <StatusBar style="dark" />
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
   <KeyboardAvoidingView
     style={{ flex: 1 }}
     behavior={Platform.OS === "ios" ? "padding" : "height"}
-    keyboardVerticalOffset={100}
   >
     
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
       keyboardShouldPersistTaps="handled"
+      style={{ backgroundColor: 'white' }}
     >
       <View style={styles.container}>
         <Text style={styles.title}>Add Document Details</Text>
@@ -117,12 +121,14 @@ return (
         </ScrollView>
 
         {showCustomInput && (
+          <View style={{marginHorizontal:10, marginTop:10}}>
           <TextInput
             style={styles.input}
             placeholder="Custom title"
             value={customTitle}
             onChangeText={setCustomTitle}
           />
+          </View>
         )}
 
         <View style={{ marginTop: 20 }}>
@@ -140,7 +146,7 @@ return (
                 value={item.value}
                 onChangeText={(text) => updateField(index, "value", text)}
               />
-              <TouchableOpacity onPress={() => removeField(index)}>
+              <TouchableOpacity  onPress={() => removeField(index)}>
                 <Ionicons name="close-circle" size={24} color="#999" />
               </TouchableOpacity>
             </View>
@@ -171,27 +177,31 @@ return (
     
   </KeyboardAvoidingView>
   </TouchableWithoutFeedback>
+  </SafeAreaView>
 );
 
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    padding: 1,
     paddingBottom:20,
     marginVertical:40,
-    marginHorizontal:10
+
   },
   title: {
     fontSize: 22,
     fontWeight: "600",
     marginBottom: 46,
-    marginVertical:10
+    marginVertical:10,
+    marginHorizontal:10,
+    alignSelf:'center'
   },
   label: {
     fontSize: 16,
     fontWeight: "500",
     marginBottom: 8,
+        marginHorizontal:10
   },
   chip: {
     paddingHorizontal: 14,
@@ -201,6 +211,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderColor:'black',
     borderWidth:0.5,
+        marginHorizontal:10
   },
   chipSelected: {
     backgroundColor: "#007AFF",
@@ -210,6 +221,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 12,
+    marginHorizontal:10
   },
   input: {
     flex: 1,
@@ -226,17 +238,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     marginBottom: 20,
+    marginHorizontal:10
   },
   addBtnText: {
     color: "#007AFF",
     fontSize: 16,
     marginLeft: 6,
+   marginHorizontal:10
   },
   saveBtn: {
     backgroundColor: "#000",
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",
+        marginHorizontal:10
   },
   saveBtnText: {
     color: "#fff",
