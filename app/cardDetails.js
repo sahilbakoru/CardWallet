@@ -34,6 +34,7 @@ export default function CardDetails() {
         const stored = await AsyncStorage.getItem("documents");
         const parsed = stored ? JSON.parse(stored) : [];
         const found = parsed.find((doc) => doc.id === id);
+        console.log(found,'card details')
         setCard(found);
       } catch (e) {
         console.error("Failed to load card:", e);
