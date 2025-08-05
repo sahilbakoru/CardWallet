@@ -4,11 +4,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity
 } from "react-native";
+import FlipCard from "./components/FlipCard";
 
 export default function ScanDocInput() {
   const [frontImage, setFrontImage] = useState('');
@@ -43,42 +43,36 @@ export default function ScanDocInput() {
   }, [params.front, params.back]);
 
 return (
-   <LinearGradient
-        colors={["#617880ff", "#e5e8e8ff","#5a737bff"]}
-        style={styles.container}
+   <LinearGradient colors={["#617880ff", "#e5e8e8ff", "#5a737bff"]} style={styles.container}>
+  <Text style={styles.title}>Scan Your Document</Text>
+
+  {frontImage ? (
+    <>
+      {frontImage && (
+  <FlipCard frontImage={frontImage} backImage={backImage} />
+)}
+
+      <TouchableOpacity
+        style={styles.removeButton}
+        onPress={() => {
+          setFrontImage(null);
+          setBackImage(null);
+        }}
       >
-    <Text style={styles.title}>Scan Your Document</Text>
-
-    {/* Front Side */}
-    {!frontImage ? (
-      <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setFrontImage)}>
-        <Text style={styles.buttonText}>Capture Front Side</Text>
+        <Text style={styles.removeText}>Remove</Text>
       </TouchableOpacity>
-    ) : (
-      <>
+    </>
+  ) : (
+    <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setFrontImage)}>
+      <Text style={styles.buttonText}>Capture Front Side</Text>
+    </TouchableOpacity>
+  )}
 
-        <Image source={{ uri: frontImage }} style={styles.preview} />
-        <TouchableOpacity style={styles.removeButton} onPress={() => setFrontImage(null)}>
-          <Text style={styles.removeText}>Remove Front</Text>
-        </TouchableOpacity>
-      </>
-    )}
-
-    {/* Back Side (optional) */}
-    {frontImage && !backImage && (
-      <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setBackImage)}>
-        <Text style={styles.buttonText}>Capture Back Side (Optional)</Text>
-      </TouchableOpacity>
-    )}
-    {backImage && (
-      <>
-        
-        <Image source={{ uri: backImage }} style={styles.preview} />
-        <TouchableOpacity style={styles.removeButton} onPress={() => setBackImage(null)}>
-          <Text style={styles.removeText}>Remove Back</Text>
-        </TouchableOpacity>
-      </>
-    )}
+  {frontImage && !backImage && (
+    <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setBackImage)}>
+      <Text style={styles.buttonText}>Capture Back Side (Optional)</Text>
+    </TouchableOpacity>
+  )}
 
     {/* Save Button */}
     {frontImage && (
@@ -180,7 +174,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 14,
     borderRadius: 8,
-    marginBottom: 20,
+    marginBottom: 25,
   },
   removeText: {
     color: "#fff",

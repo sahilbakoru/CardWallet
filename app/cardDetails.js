@@ -2,6 +2,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -15,6 +16,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get("window");
 // ...imports stay unchanged
@@ -97,6 +99,8 @@ const triggerFlip = () => {
   const imageToShow = isFlipped && card.backImage ? card.backImage : card.frontImage;
 
 return (
+  <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
+    <StatusBar style="dark" />
   <ImageBackground
     source={require("../assets/Backround/backround.png")}
     style={styles.backgroundImage}
@@ -207,6 +211,7 @@ return (
       </View>
     </LinearGradient>
   </ImageBackground>
+  </SafeAreaView>
 );
 
 }

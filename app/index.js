@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,6 +18,7 @@ import {
   Vibration,
   View
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { pickImage } from './GalleryInput';
 const { height, width } = Dimensions.get("window");
 const CARD_HEIGHT = 230;
@@ -60,6 +62,8 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
   );
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
+      <StatusBar style="dark" />
     <ImageBackground
       source={require('../assets/Backround/backround.png')}
       style={styles.container}
@@ -317,6 +321,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
       </LinearGradient>
 
     </ImageBackground>
+    </SafeAreaView>
   );
 }
 

@@ -8,6 +8,7 @@ export default function RootLayout() {
    screenOptions={{
       headerShown: false,
       animation: "slide_from_right",
+  
     }}></Stack>
 
 }
