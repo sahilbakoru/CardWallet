@@ -238,13 +238,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     marginBottom: 20,
-    marginHorizontal:10
+    marginHorizontal:10,
+    justifyContent:'center',
   },
   addBtnText: {
     color: "#007AFF",
     fontSize: 16,
     marginLeft: 6,
-   marginHorizontal:10
+   marginHorizontal:10,
+   marginVertical:10
   },
   saveBtn: {
     backgroundColor: "#000",
