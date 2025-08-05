@@ -97,7 +97,7 @@ export default function ScanDocInput() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor:'grey' }}>
       <StatusBar style="dark" />
       <LinearGradient colors={[ "#e5e8e8ff", "#e5e8e8ff"]} style={{ flex: 1 }}>
         <KeyboardAvoidingView
