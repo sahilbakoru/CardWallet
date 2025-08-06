@@ -1,14 +1,14 @@
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useRef, useState } from "react";
 import {
-    Animated,
-    Dimensions,
-    Easing,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  Easing,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -79,7 +79,7 @@ export default function FlipCard({ frontImage, backImage }) {
       {backImage && (
         <TouchableOpacity style={styles.flipButton} onPress={triggerFlip}>
           <View style={styles.flipButtonContent}>
-            <FontAwesome6 name="arrows-rotate" size={18} color="black" />
+            <FontAwesome6 name="arrows-rotate" size={16} color="black" />
             <Text style={styles.flipButtonText}>Flip</Text>
           </View>
         </TouchableOpacity>
@@ -91,7 +91,7 @@ export default function FlipCard({ frontImage, backImage }) {
 const styles = StyleSheet.create({
   wrapper: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 8,
   },
   card: {
     width: width - 32,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   flipButtonText: {
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "300",
     color: "black",
   },
 });
