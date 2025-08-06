@@ -138,13 +138,13 @@ const pickImage = async (setter) => {
               </>
             ) : (
               <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setFrontImage)}>
-                <Text style={styles.buttonText}>Capture Front Side</Text>
+                <Text style={styles.buttonText}>Capture Front</Text>
               </TouchableOpacity>
             )}
 
             {frontImage && !backImage && (
               <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setBackImage)}>
-                <Text style={styles.buttonText}>Capture Back Side (Optional)</Text>
+                <Text style={styles.buttonText}>Capture Back (Optional)</Text>
               </TouchableOpacity>
             )}
 <View
