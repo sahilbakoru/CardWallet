@@ -1,6 +1,7 @@
 // your imports here
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -34,17 +35,31 @@ export default function ScanDocInput() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  const pickImage = async (setter) => {
-    setLoading(true);
-    const result = await ImagePicker.launchCameraAsync({
-      quality: 1,
-      allowsEditing: true,
-    });
-    setLoading(false);
-    if (!result.canceled && result.assets?.length > 0) {
-      setter(result.assets[0].uri);
+const pickImage = async (setter) => {
+  setLoading(true);
+  const result = await ImagePicker.launchCameraAsync({
+    quality: 1,
+    allowsEditing: true,
+  });
+  setLoading(false);
+
+  if (!result.canceled && result.assets?.length > 0) {
+    const originalUri = result.assets[0].uri;
+    const fileName = originalUri.split('/').pop();
+    const newPath = FileSystem.documentDirectory + fileName;
+
+    try {
+      await FileSystem.copyAsync({
+        from: originalUri,
+        to: newPath,
+      });
+
+      setter(newPath); // this is the persistent URI
+    } catch (err) {
+      console.error("Error saving image to app storage:", err);
     }
-  };
+  }
+};
 
   useEffect(() => {
     if (!frontImage) pickImage(setFrontImage);
@@ -95,78 +110,86 @@ export default function ScanDocInput() {
       console.error("Error saving:", e);
     }
   };
-
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor:'grey' }}>
-      <StatusBar style="dark" />
-      <LinearGradient colors={[ "#e5e8e8ff", "#e5e8e8ff"]} style={{ flex: 1 }}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1 }}
-        >
-          <ScrollView  contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+return (
+  <SafeAreaView style={{ flex: 1, backgroundColor: '#f0f4f8' }}>
+    <StatusBar style="dark" />
+    <LinearGradient colors={['#ffffff', '#e6ecf2']} style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          <View style={styles.header}>
             <Text style={styles.title}>Scan Your Document</Text>
+            <View style={styles.underline} />
+          </View>
 
+          <View style={styles.imageSection}>
             {frontImage ? (
               <>
-                <FlipCard frontImage={frontImage} backImage={backImage} />
-
+                <FlipCard frontImage={frontImage} backImage={backImage} style={styles.card} />
                 <TouchableOpacity
                   style={styles.removeButton}
                   onPress={() => {
                     setFrontImage(null);
                     setBackImage(null);
                   }}
+                  activeOpacity={0.7}
                 >
                   <Text style={styles.removeText}>Remove</Text>
                 </TouchableOpacity>
               </>
             ) : (
-              <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setFrontImage)}>
+              <TouchableOpacity
+                style={styles.captureButton}
+                onPress={() => pickImage(setFrontImage)}
+                activeOpacity={0.7}
+              >
                 <Text style={styles.buttonText}>Capture Front Side</Text>
               </TouchableOpacity>
             )}
-
             {frontImage && !backImage && (
-              <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setBackImage)}>
+              <TouchableOpacity
+                style={styles.captureButton}
+                onPress={() => pickImage(setBackImage)}
+                activeOpacity={0.7}
+              >
                 <Text style={styles.buttonText}>Capture Back Side (Optional)</Text>
               </TouchableOpacity>
             )}
-<View
-  style={{
-    borderBottomColor: 'black',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    marginBottom:20
-  }}
-/>
-            {/* Form Section */}
+          </View>
 
-            {/* <Text style={styles.label}>Select a Title</Text> */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
-              {PRESET_TITLES.map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={[
-                    styles.chip,
-                    (title === item || (item === "Other" && showCustomInput)) && styles.chipSelected,
-                  ]}
-                  onPress={() => {
-                    if (item === "Other") {
-                      setShowCustomInput(true);
-                      setTitle("");
-                    } else {
-                      setShowCustomInput(false);
-                      setCustomTitle("");
-                      setTitle(item);
-                    }
-                  }}
-                >
-                  <Text style={{ color: title === item || (item === "Other" && showCustomInput) ? "#fff" : "#333" }}>
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+          <View style={styles.divider} />
+
+          <View style={styles.formSection}>
+            <View style={styles.chipWrapper}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {PRESET_TITLES.map((item) => (
+                  <TouchableOpacity
+                    key={item}
+                    style={[
+                      styles.chip,
+                      (title === item || (item === "Other" && showCustomInput)) && styles.chipSelected,
+                    ]}
+                    onPress={() => {
+                      if (item === "Other") {
+                        setShowCustomInput(true);
+                        setTitle("");
+                      } else {
+                        setShowCustomInput(false);
+                        setCustomTitle("");
+                        setTitle(item);
+                      }
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.chipText}>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
 
             {showCustomInput && (
               <TextInput
@@ -174,6 +197,7 @@ export default function ScanDocInput() {
                 placeholder="Custom title"
                 value={customTitle}
                 onChangeText={setCustomTitle}
+                placeholderTextColor="#718096"
               />
             )}
 
@@ -184,21 +208,27 @@ export default function ScanDocInput() {
                   placeholder="Label"
                   value={item.key}
                   onChangeText={(text) => updateField(index, "key", text)}
+                  placeholderTextColor="#718096"
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Value"
                   value={item.value}
                   onChangeText={(text) => updateField(index, "value", text)}
+                  placeholderTextColor="#718096"
                 />
-                <TouchableOpacity onPress={() => removeField(index)}>
-                  <Ionicons name="close-circle" size={24} color="#999" />
+                <TouchableOpacity onPress={() => removeField(index)} activeOpacity={0.7}>
+                  <Ionicons name="close-circle" size={24} color="#e53e3e" />
                 </TouchableOpacity>
               </View>
             ))}
 
-            <TouchableOpacity style={styles.addBtn} onPress={addField}>
-              <Ionicons name="add-circle" size={22} color="#007AFF" />
+            <TouchableOpacity
+              style={styles.addBtn}
+              onPress={addField}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="add-circle" size={22} color="#2b6cb0" />
               <Text style={styles.addBtnText}>Add Field</Text>
             </TouchableOpacity>
 
@@ -209,118 +239,179 @@ export default function ScanDocInput() {
               ]}
               onPress={saveCard}
               disabled={!frontImage ? true : false}
+              activeOpacity={0.7}
             >
               <Text style={styles.saveText}>Save Card</Text>
             </TouchableOpacity>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </LinearGradient>
-    </SafeAreaView>
-  );
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
+  </SafeAreaView>
+);
 }
+
 
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
     padding: 20,
-    paddingBottom: 60,
+    paddingBottom: 40,
   },
-  // title: {
-  //   fontSize: 22,
-  //   fontWeight: "600",
-  //   color: "#fff",
-  //   marginBottom: 20,
-  //   marginTop: 30,
-  //   alignSelf: "center",
-  // },
-  label: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginBottom: 8,
-    color: "black",
+  header: {
+    alignItems: 'center',
+    marginBottom: 30,
   },
   title: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: "#000000ff",
-    marginVertical: 30,
-    alignSelf:'center'
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#2d3748',
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  underline: {
+    height: 2,
+    width: 50,
+    backgroundColor: '#2b6cb0',
+    marginTop: 5,
+    borderRadius: 1,
+  },
+  imageSection: {
+    alignItems: 'center',
+    marginBottom: 30,
+    padding: 15,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  card: {
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   captureButton: {
-    backgroundColor: "#bac3cdff",
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    alignItems: "center",
-    marginBottom: 20,
+    backgroundColor: '#edf2f7',
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginVertical: 12,
+    borderWidth: 1,
+    borderColor: '#cbd5e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   buttonText: {
     fontSize: 16,
-    color: "#2C3E50",
-    fontWeight: "500",
+    color: '#2d3748',
+    fontWeight: '600',
   },
   removeButton: {
-    alignSelf: "flex-end",
-    backgroundColor: "#E74C3C",
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-    marginBottom: 25,
+    backgroundColor: '#fc8181',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 6,
+    marginTop: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   removeText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '600',
+  },
+  divider: {
+    borderBottomColor: '#e2e8f0',
+    borderBottomWidth: 1,
+    marginBottom: 25,
+  },
+  formSection: {
+    padding: 10,
+  },
+  chipWrapper: {
+    marginBottom: 20,
   },
   chip: {
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: '#edf2f7',
     borderRadius: 20,
-    marginRight: 8,
-      borderColor:'black',
-    borderWidth:0.5,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   chipSelected: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#2b6cb0',
+    borderColor: '#2c5282',
+  },
+  chipText: {
+    color: '#2d3748',
+    fontSize: 14,
+    fontWeight: '500',
   },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
+    borderColor: '#e2e8f0',
+    padding: 12,
     borderRadius: 8,
-    marginRight: 8,
-    fontSize: 15,
-    marginVertical:5,
-    backgroundColor:'white'
+    marginRight: 10,
+    fontSize: 16,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   fieldRow: {
- flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    marginHorizontal:10
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
   },
   addBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 25,
+    padding: 10,
+    backgroundColor: '#edf2f7',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   addBtnText: {
-    color: "#007AFF",
+    color: '#2b6cb0',
     fontSize: 16,
-    marginLeft: 6,
+    fontWeight: '600',
+    marginLeft: 10,
   },
   saveButton: {
-    backgroundColor: "#2C3E50",
+    backgroundColor: '#2b6cb0',
     paddingVertical: 16,
-    borderRadius: 14,
-    alignItems: "center",
-    marginTop: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   saveText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
   },
   disabled: {
     opacity: 0.5,

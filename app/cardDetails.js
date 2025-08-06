@@ -1,5 +1,6 @@
 import { FontAwesome6 } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FileSystem from "expo-file-system";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
@@ -74,26 +75,43 @@ const triggerFlip = () => {
   setIsFront(!isFront);
 };
 
-  const handleDelete = async () => {
-    Alert.alert("Delete", "Are you sure you want to delete this card?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            const stored = await AsyncStorage.getItem("documents");
-            const parsed = stored ? JSON.parse(stored) : [];
-            const updated = parsed.filter((doc) => doc.id !== id);
-            await AsyncStorage.setItem("documents", JSON.stringify(updated));
-            router.back();
-          } catch (e) {
-            console.error("Failed to delete card:", e);
+const handleDelete = async () => {
+  Alert.alert("Delete", "Are you sure you want to delete this card?", [
+    { text: "Cancel", style: "cancel" },
+    {
+      text: "Delete",
+      style: "destructive",
+      onPress: async () => {
+        try {
+          const stored = await AsyncStorage.getItem("documents");
+          const parsed = stored ? JSON.parse(stored) : [];
+
+          // Find the card being deleted
+          const card = parsed.find((doc) => doc.id === id);
+
+          // Delete front/back images if they exist
+          if (card?.frontImage) {
+            const info = await FileSystem.getInfoAsync(card.frontImage);
+            if (info.exists) await FileSystem.deleteAsync(card.frontImage);
           }
-        },
+
+          if (card?.backImage) {
+            const info = await FileSystem.getInfoAsync(card.backImage);
+            if (info.exists) await FileSystem.deleteAsync(card.backImage);
+          }
+
+          // Remove the card from storage
+          const updated = parsed.filter((doc) => doc.id !== id);
+          await AsyncStorage.setItem("documents", JSON.stringify(updated));
+
+          router.back();
+        } catch (e) {
+          console.error("Failed to delete card and images:", e);
+        }
       },
-    ]);
-  };
+    },
+  ]);
+};
 
   if (!card) return <Text style={{ color: "white", padding: 20 }}>Loading...</Text>;
 

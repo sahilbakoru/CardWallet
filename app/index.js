@@ -48,8 +48,10 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
       const loadCards = async () => {
         try {
           const stored = await AsyncStorage.getItem("documents");
+          console.log(stored,'stored')
           if (stored) {
             const parsed = JSON.parse(stored);
+            console.log(parsed,'parsed')
             setCards(parsed);
           }
         } catch (e) {
