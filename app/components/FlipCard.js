@@ -79,7 +79,7 @@ export default function FlipCard({ frontImage, backImage }) {
       {backImage && (
         <TouchableOpacity style={styles.flipButton} onPress={triggerFlip}>
           <View style={styles.flipButtonContent}>
-            <FontAwesome6 name="arrows-rotate" size={16} color="black" />
+            <FontAwesome6 name="arrows-rotate" size={16} color="#f1f2f6e4" />
             <Text style={styles.flipButtonText}>Flip</Text>
           </View>
         </TouchableOpacity>
@@ -91,7 +91,7 @@ export default function FlipCard({ frontImage, backImage }) {
 const styles = StyleSheet.create({
   wrapper: {
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 1,
   },
   card: {
     width: width - 32,
@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   flipButton: {
-    marginTop: 16,
-    backgroundColor: "#f1f2f670",
+    marginTop: 10,
+    backgroundColor: "#f1f2f617",
     paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: 24,
@@ -132,6 +132,6 @@ const styles = StyleSheet.create({
   flipButtonText: {
     fontSize: 16,
     fontWeight: "300",
-    color: "black",
+    color: "#f1f2f6e4",
   },
 });

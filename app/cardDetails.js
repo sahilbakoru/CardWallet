@@ -1,7 +1,8 @@
-import { FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system";
 import { LinearGradient } from 'expo-linear-gradient';
+
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +13,7 @@ import {
   Easing,
   Image,
   ImageBackground,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -126,9 +128,10 @@ return (
     resizeMode="cover"
   >
     <LinearGradient
-      colors={["rgba(0, 0, 0, 0.78)", "rgba(75, 75, 75, 0.7)"]}
+      colors={["rgba(79, 65, 47, 0.7)", "rgba(48, 81, 96, 0.55)", "rgba(75, 49, 70, 0.78)",]}
       style={styles.gradientOverlay}
     >
+     < ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
 
         {/* CARD IMAGE (Animated if back exists, else just front image) */}
@@ -168,14 +171,25 @@ return (
   ) : (
     // Fallback UI for manually added card (no frontImage)
     <ImageBackground
-      source={backgroundImage}
-      imageStyle={{ borderRadius: 16 }}
-      style={styles.cardBackground}
-    >
-      <LinearGradient
-        colors={["#8abc7f53", "#e1857e4e", "#7fbcb853", "#c6c85b4a"]}
-        style={styles.cardContent}
-      >
+                          source={backgroundImage}
+                          imageStyle={{ borderRadius: 16, opacity: 1 }}
+                          style={{
+                            height: "100%",
+                            width: "100%",
+                            borderRadius: 16,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <LinearGradient
+                            colors={["#8abc7f53", "#e1857e4e", "#7fbcb853", "#c6c85b4a"]}
+                            style={{
+                              height: "100%",
+                              width: "100%",
+                              borderRadius: 16,
+                              padding: 20,
+                              justifyContent: "center",
+                            }}
+                          >
         <Text style={styles.cardTitle}>
           {card.title || "Untitled"}
         </Text>
@@ -206,21 +220,39 @@ return (
         )}
 
         {/* Card info section */}
-        <View style={styles.detailsBox}>
-          <Text style={styles.detailsTitle}>Card Info</Text>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Type:</Text>
-            <Text style={styles.detailValue}>National ID</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Issued:</Text>
-            <Text style={styles.detailValue}>2019-07-23</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Expires:</Text>
-            <Text style={styles.detailValue}>2029-07-23</Text>
-          </View>
-        </View>
+  <View style={styles.detailsContainer}>
+  <View style={styles.cardHeader}>
+    <Text style={styles.cardTitle}>{card.title || "Untitled"}</Text>
+    <View style={styles.statusIndicator} />
+  </View>
+  <View style={styles.cardBody}>
+    {/* Type Row */}
+    <View style={styles.detailRow}>
+      <Text style={styles.detailLabel}>Type</Text>
+      <Text style={styles.detailValue}>{card.type || "N/A"}</Text>
+    </View>
+
+    {/* Custom Fields (Dynamic) */}
+    {card.fields?.map((field, index) => (
+      <View style={styles.detailRow} key={`field-${index}`}>
+        <Text style={styles.detailLabel}>{field.key.trim()}</Text>
+        <Text style={styles.detailValue}>{field.value}</Text>
+      </View>
+    ))}
+
+    {/* Timestamp Row */}
+    <View style={styles.detailRow}>
+      <Text style={styles.detailLabel}>Date Added</Text>
+      <Text style={styles.detailValue}>
+        {card.timestamp ? new Date(card.timestamp).toLocaleDateString() : "N/A"}
+      </Text>
+    </View>
+  </View>
+  <TouchableOpacity style={styles.actionButton} onPress={() => {/* Handle action */}}>
+    <Text style={styles.actionText}>View Images</Text>
+    <Ionicons name="arrow-forward" size={16} color="#ffffff" />
+  </TouchableOpacity>
+</View>
 
         <Text style={styles.text}>Card ID: {id}</Text>
 
@@ -228,6 +260,7 @@ return (
           <Text style={styles.deleteText}>Delete Card</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
     </LinearGradient>
   </ImageBackground>
   </SafeAreaView>
@@ -247,10 +280,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 40,
+    paddingTop: 20,
   },
   card: {
-    width: width - 32,
+    width: width - 40,
     height: 230,
     borderRadius: 16,
     overflow: "hidden",
@@ -277,13 +310,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-  cardTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#1d1d1d",
-    marginBottom: 10,
-    textAlign: "center",
-  },
+  // cardTitle: {
+  //   fontSize: 22,
+  //   fontWeight: "700",
+  //   color: "#1d1d1d",
+  //   marginBottom: 10,
+  //   textAlign: "center",
+  // },
   cardField: {
     fontSize: 15,
     color: "#333",
@@ -323,46 +356,93 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   deleteButton: {
-    backgroundColor: "#e74c3c",
+    backgroundColor: "#ffdad58e",
     paddingVertical: 10,
     paddingHorizontal: 28,
     borderRadius: 10,
     marginTop: 10,
   },
   deleteText: {
-    color: "#fff",
+    color: "#ff1c02ff",
     fontWeight: "600",
     fontSize: 16,
   },
-  detailsBox: {
-    width: width - 40,
-    backgroundColor: "#ffffff09",
-    padding: 18,
-    borderRadius: 14,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
+
+  detailsContainer: {
+    width: '100%',
+    backgroundColor: '#ffffff2c',
+    borderRadius: 16,
+    padding: 20,
+    marginVertical: 10,
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 4 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 8,
+    // elevation: 5,
+    alignSelf: 'center',
   },
-  detailsTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#ffffffff",
-    marginBottom: 10,
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e2e8f0',
+    paddingBottom: 10,
+  },
+  cardTitle: {
+    fontSize: 22,
+    fontWeight: '400',
+    color: '#000000ff',
+    textTransform: 'capitalize',
+  },
+  statusIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#48bb78', // Green for active, could be dynamic based on status
+  },
+  cardBody: {
+    paddingVertical: 10,
   },
   detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 6,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    paddingVertical: 4,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#edf2f7',
   },
   detailLabel: {
-    fontWeight: "600",
-    color: "#fcfcfcff",
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffffff',
+    textTransform: 'capitalize',
   },
   detailValue: {
-    color: "#f5f5f5ff",
-    fontWeight: "500",
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#f5f5f6ff',
+    textAlign: 'right',
+  },
+  actionButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: '#2b6cb0',
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginTop: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  actionText: {
+    color: '#ffffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginRight: 8,
   },
   flipCard: {
   position: "absolute",
