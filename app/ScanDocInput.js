@@ -128,7 +128,8 @@ const pickImage = async (setter) => {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
         >
-          <ScrollView  contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          <ScrollView showsVerticalScrollIndicator={false}  contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+             <View style={styles.formContainer} >
             <Text style={styles.title}>Document</Text>
 
             {frontImage ? (
@@ -165,7 +166,7 @@ const pickImage = async (setter) => {
 />
             {/* Form Section */}
 
-           
+          
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
               {PRESET_TITLES.map((item) => (
                 <TouchableOpacity
@@ -229,7 +230,19 @@ const pickImage = async (setter) => {
               <Text style={styles.addBtnText}>Add Field</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
+              style={[
+                styles.saveButton,
+                !frontImage ? styles.disabled : {},
+              ]}
+              onPress={saveCard}
+              disabled={!frontImage ? true : false}
+            >
+              <Text style={styles.saveText}>Save Card</Text>
+            </TouchableOpacity> */}
+            </View>
+          </ScrollView>
+  <TouchableOpacity
               style={[
                 styles.saveButton,
                 !frontImage ? styles.disabled : {},
@@ -239,7 +252,6 @@ const pickImage = async (setter) => {
             >
               <Text style={styles.saveText}>Save Card</Text>
             </TouchableOpacity>
-          </ScrollView>
         </KeyboardAvoidingView>
         </LinearGradient>
       </ImageBackground>
@@ -250,7 +262,7 @@ const pickImage = async (setter) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 5,
+    padding: 1,
     paddingBottom: 60,
   },
   backgroundImage: {
@@ -265,21 +277,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "300",
     color: "#ffffffff",
-    marginVertical: 18,
+    marginVertical: 10,
     alignSelf:'center'
   },
   captureButton: {
-    backgroundColor: "#7373732a",
+    backgroundColor: "#73737356",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 12,
     alignItems: "center",
-    marginBottom: 10,
+    margin: 10,
   },
   buttonText: {
     fontSize: 16,
     color: "#ffffffff",
-    fontWeight: "300",
+    fontWeight: "400",
   },
   removeButton: {
     alignSelf: "flex-end",
@@ -290,7 +302,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   removeText: {
-    color: "#d40000ff",
+    color: "#f44242ff",
     fontSize: 14,
    fontWeight: "400",
   },
@@ -343,7 +355,7 @@ backgroundColor: "#7373732a",
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
-    marginTop: 10,
+    margin: 10,
   },
   saveText: {
     color: "#fff",
@@ -352,5 +364,11 @@ backgroundColor: "#7373732a",
   },
   disabled: {
     opacity: 0.5,
+  },
+  formContainer: {
+backgroundColor:'rgba(0, 0, 0, 0.55)',
+paddingVertical:10,
+padding:5,
+borderRadius:20,
   },
 });
