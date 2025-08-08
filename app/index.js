@@ -3,7 +3,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { StatusBar } from 'expo-status-bar';
 import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -18,7 +17,6 @@ import {
   Vibration,
   View
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { pickImage } from './GalleryInput';
 const { height, width } = Dimensions.get("window");
 const CARD_HEIGHT = 230;
@@ -64,15 +62,16 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
-      <StatusBar style="dark" />
+    // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
+      
+      // <StatusBar style="dark" />
     <ImageBackground
       source={require('../assets/Backround/backround.png')}
       style={styles.container}
       resizeMode="cover"
     >
       <LinearGradient
-        colors={["rgba(79, 65, 47, 0.7)", "rgba(48, 81, 96, 0.55)", "rgba(75, 49, 70, 0.78)",]}
+        colors={["rgba(255, 208, 147, 0.56)", "rgba(133, 216, 255, 0.48)", "rgba(255, 174, 239, 0.52)",]}
         style={styles.container}
       >
         {isGalleryOpening && (
@@ -201,13 +200,13 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingVertical: (height - CARD_HEIGHT) / 2,
+            paddingVertical: (height - CARD_HEIGHT) / 2.5,  // chnage the cards position on screen 
           }}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             { useNativeDriver: true }
           )}
-          scrollEventThrottle={16}
+          scrollEventThrottle={5}
           renderItem={({ item, index }) => {
             const inputRange = [
               (index - 1) * FULL_CARD_HEIGHT,
@@ -242,6 +241,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
                     styles.card,
                     {
                       transform: [{ scale }],
+                      opacity
                     },
                   ]}
                 >
@@ -323,7 +323,8 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
       </LinearGradient>
 
     </ImageBackground>
-    </SafeAreaView>
+    
+    // {/* </SafeAreaView> */}
   );
 }
 
@@ -334,7 +335,7 @@ const styles = StyleSheet.create({
   card: {
     height: CARD_HEIGHT,
     width: width - 60,
-    marginVertical: SPACING / 2,
+    marginVertical: SPACING / 5,
     alignSelf: "center",
     borderRadius: 16,
     backgroundColor: "#fffefeff",

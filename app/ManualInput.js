@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { StatusBar } from 'expo-status-bar';
 import { useState } from "react";
 import {
   Keyboard,
@@ -15,7 +14,6 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PRESET_TITLES = [
   "License",
@@ -69,8 +67,8 @@ export default function ManualInput() {
   };
 
 return (
-  <SafeAreaView style={{ flex: 1,backgroundColor: 'grey'  }}>
-        <StatusBar style="dark" />
+  // <SafeAreaView style={{ flex: 1,backgroundColor: 'grey'  }}>
+  //       <StatusBar style="dark" />
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
   <KeyboardAvoidingView
     style={{ flex: 1 }}
@@ -177,7 +175,7 @@ return (
     
   </KeyboardAvoidingView>
   </TouchableWithoutFeedback>
-  </SafeAreaView>
+  // </SafeAreaView>
 );
 
 }

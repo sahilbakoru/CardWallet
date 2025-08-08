@@ -1,12 +1,12 @@
 // your imports here
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ImageBackground,
   KeyboardAvoidingView,
@@ -18,11 +18,10 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
 import FlipCard from "./components/FlipCard";
 
 const PRESET_TITLES = [
-  "License", "Payment Card", "Gift Card", "Identity Card", "Passport", "Password", "Other",
+  "License", "Payment Card","Invoice", "Gift Card", "Identity Card", "Passport", "Password", "Other",
 ];
 
 export default function ScanDocInput() {
@@ -62,9 +61,14 @@ const pickImage = async (setter) => {
   }
 };
 
-  useEffect(() => {
-    if (!frontImage) pickImage(setFrontImage);
-  }, []);
+useFocusEffect(
+  useCallback(() => {
+    if (!frontImage) {
+      pickImage(setFrontImage);
+    }
+  }, [frontImage])
+);
+
 
   useEffect(() => {
     if (params.front) setFrontImage(params.front);
@@ -113,8 +117,8 @@ const pickImage = async (setter) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor:'grey' }}>
-      <StatusBar style="dark" />
+    // <SafeAreaView style={{ flex: 1, backgroundColor:'grey' }}>
+    //   <StatusBar style="dark" />
         <ImageBackground
           source={require("../assets/Backround/backround.png")}
           style={styles.backgroundImage}
@@ -230,19 +234,7 @@ const pickImage = async (setter) => {
               <Text style={styles.addBtnText}>Add Field</Text>
             </TouchableOpacity>
 
-            {/* <TouchableOpacity
-              style={[
-                styles.saveButton,
-                !frontImage ? styles.disabled : {},
-              ]}
-              onPress={saveCard}
-              disabled={!frontImage ? true : false}
-            >
-              <Text style={styles.saveText}>Save Card</Text>
-            </TouchableOpacity> */}
-            </View>
-          </ScrollView>
-  <TouchableOpacity
+            <TouchableOpacity
               style={[
                 styles.saveButton,
                 !frontImage ? styles.disabled : {},
@@ -252,11 +244,14 @@ const pickImage = async (setter) => {
             >
               <Text style={styles.saveText}>Save Card</Text>
             </TouchableOpacity>
+            </View>
+          </ScrollView>
+  
         </KeyboardAvoidingView>
         </LinearGradient>
       </ImageBackground>
       
-    </SafeAreaView>
+    // </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
@@ -281,7 +276,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   formContainer: {
-    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    backgroundColor: "rgba(0, 0, 0, 0.11)",
     padding: 5,
     borderRadius: 20,
     marginHorizontal: 6,

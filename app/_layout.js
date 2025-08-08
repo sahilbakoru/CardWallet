@@ -1,14 +1,67 @@
-import { Stack } from "expo-router";
-
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import FontAwesome from '@expo/vector-icons/Octicons';
+import { Tabs } from "expo-router";
 export default function RootLayout() {
-  return <Stack 
-  // options={{
-  //   animation: "fade", // or "none" for instant return
-  // }}
-   screenOptions={{
-      headerShown: false,
-      animation: "slide_from_right",
+  return (
+
+    <Tabs screenOptions={{ tabBarActiveTintColor: 'black',
+  headerStyle: {
+      // backgroundColor: 'rgba(0, 0, 0, 0.44)', // Overrides the global headerStyle for this screen
+    },
+      // tabBarShowLabel:false, 
+    }}
   
-    }}></Stack>
+  >
+      <Tabs.Screen options={{
+        
+        title: 'Home',
+        tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
+      }} name="index"
+      />
+      <Tabs.Screen
+        name="ScanDocInput"
+
+        options={{
+          title: 'scan',
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="credit-card-scan" size={28} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          // tabBarBadge:1,
+          title: 'Settings',
+          tabBarIcon: ({ color }) => <Ionicons name="settings-outline" size={28} color={color} />,
+        }}
+      />
+        <Tabs.Screen
+        name="tabs"
+        options={{
+          href: null,
+        }}
+      />
+        <Tabs.Screen
+        name="cardDetails"
+        options={{
+          href: null,
+        }}
+      />
+       <Tabs.Screen
+        name="ManualInput"
+        options={{
+          href: null,
+        }}
+      />
+   <Tabs.Screen
+        name="components"
+        options={{
+          href: null,
+        }}
+      />
+      
+   
+
+    </Tabs>)
 
 }

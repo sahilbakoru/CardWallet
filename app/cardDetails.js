@@ -4,7 +4,6 @@ import * as FileSystem from "expo-file-system";
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -19,7 +18,6 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get("window");
 // ...imports stay unchanged
@@ -120,18 +118,19 @@ const handleDelete = async () => {
   const imageToShow = isFlipped && card.backImage ? card.backImage : card.frontImage;
 
 return (
-  <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
-    <StatusBar style="dark" />
+  // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
+  //   <StatusBar style="dark" />
   <ImageBackground
     source={require("../assets/Backround/backround.png")}
     style={styles.backgroundImage}
     resizeMode="cover"
   >
+     < ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} >
     <LinearGradient
       colors={["rgba(79, 65, 47, 0.7)", "rgba(48, 81, 96, 0.55)", "rgba(75, 49, 70, 0.78)",]}
       style={styles.gradientOverlay}
     >
-     < ScrollView showsVerticalScrollIndicator={false}>
+    
       <View style={styles.container}>
 
         {/* CARD IMAGE (Animated if back exists, else just front image) */}
@@ -260,10 +259,11 @@ return (
           <Text style={styles.deleteText}>Delete Card</Text>
         </TouchableOpacity>
       </View>
-      </ScrollView>
+     
     </LinearGradient>
+     </ScrollView>
   </ImageBackground>
-  </SafeAreaView>
+  // </SafeAreaView>
 );
 
 }
@@ -276,6 +276,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "flex-start",
+   
   },
   container: {
     flex: 1,
