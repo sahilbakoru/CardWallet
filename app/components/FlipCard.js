@@ -39,7 +39,7 @@ export default function FlipCard({ frontImage, backImage }) {
   const triggerFlip = () => {
     Animated.timing(flipAnim, {
       toValue: isFront ? 180 : 0,
-      duration: 800,
+      duration: 700,
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: true,
     }).start();
@@ -79,7 +79,7 @@ export default function FlipCard({ frontImage, backImage }) {
       {backImage && (
         <TouchableOpacity style={styles.flipButton} onPress={triggerFlip}>
           <View style={styles.flipButtonContent}>
-            <FontAwesome6 name="arrows-rotate" size={16} color="#f1f2f6e4" />
+            <FontAwesome6 name="arrows-rotate" size={16} color="#000000e4" />
             <Text style={styles.flipButtonText}>Flip</Text>
           </View>
         </TouchableOpacity>
@@ -132,6 +132,6 @@ const styles = StyleSheet.create({
   flipButtonText: {
     fontSize: 16,
     fontWeight: "300",
-    color: "#f1f2f6e4",
+    color: "#000000e4",
   },
 });

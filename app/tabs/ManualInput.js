@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -65,7 +66,15 @@ export default function ManualInput() {
 
     router.replace("/");
   };
-
+useFocusEffect(
+  useCallback(() => {
+    // Reset all form fields when screen is focused
+    setTitle("");
+    setCustomTitle("");
+    setShowCustomInput(false);
+    setFields([{ key: "", value: "" }]);
+  }, [])
+);
 return (
   // <SafeAreaView style={{ flex: 1,backgroundColor: 'grey'  }}>
   //       <StatusBar style="dark" />

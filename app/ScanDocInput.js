@@ -29,7 +29,7 @@ export default function ScanDocInput() {
   const [backImage, setBackImage] = useState('');
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState([{ key: "", value: "" }]);
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState("Document");
   const [customTitle, setCustomTitle] = useState("");
   const [showCustomInput, setShowCustomInput] = useState(false);
   const router = useRouter();
@@ -115,6 +115,20 @@ useFocusEffect(
       console.error("Error saving:", e);
     }
   };
+useFocusEffect(
+  useCallback(() => {
+    // Reset state when screen is focused
+    setFrontImage('');
+    setBackImage('');
+    setTitle('Document');
+    setCustomTitle('');
+    setShowCustomInput(false);
+    setFields([{ key: '', value: '' }]);
+
+    // Prompt camera for front image if it's empty
+    pickImage(setFrontImage);
+  }, [])
+);
 
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor:'grey' }}>
@@ -125,7 +139,7 @@ useFocusEffect(
           resizeMode="cover"
         >
           <LinearGradient
-            colors={["rgba(79, 65, 47, 0.7)", "rgba(48, 81, 96, 0.55)", "rgba(75, 49, 70, 0.78)",]}
+            colors={["rgba(255, 208, 147, 0.56)", "rgba(133, 216, 255, 0.48)", "rgba(255, 174, 239, 0.52)",]}
             style={styles.gradientOverlay}
           >
         <KeyboardAvoidingView
@@ -134,7 +148,7 @@ useFocusEffect(
         >
           <ScrollView showsVerticalScrollIndicator={false}  contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
              <View style={styles.formContainer} >
-            <Text style={styles.title}>Document</Text>
+            <Text style={styles.title}>{title}</Text>
 
             {frontImage ? (
               <>
@@ -182,7 +196,7 @@ useFocusEffect(
                   onPress={() => {
                     if (item === "Other") {
                       setShowCustomInput(true);
-                      setTitle("");
+                      setTitle("Other");
                     } else {
                       setShowCustomInput(false);
                       setCustomTitle("");
@@ -190,7 +204,7 @@ useFocusEffect(
                     }
                   }}
                 >
-                  <Text style={{ color: title === item || (item === "Other" && showCustomInput) ? "#fff" : "#fff" ,   fontWeight: "300", }}>
+                  <Text style={{ color: title === item || (item === "Other" && showCustomInput) ? "#000" : "#000" ,   fontWeight: "300", }}>
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -203,34 +217,34 @@ useFocusEffect(
                 placeholder="Custom title"
                 value={customTitle}
                 onChangeText={setCustomTitle}
-                 placeholderTextColor={'rgba(255, 255, 255, 0.37)'}
+                 placeholderTextColor={'rgba(0, 0, 0, 0.37)'}
               />
             )}
 
             {fields.map((item, index) => (
               <View style={styles.fieldRow} key={index}>
                 <TextInput
-                placeholderTextColor={'rgba(255, 255, 255, 0.37)'}
+                placeholderTextColor={'rgba(0, 0, 0, 0.37)'}
                   style={styles.input}
                   placeholder="Card Number .."
                   value={item.key}
                   onChangeText={(text) => updateField(index, "key", text)}
                 />
                 <TextInput
-                 placeholderTextColor={'rgba(255, 255, 255, 0.37)'}
+                 placeholderTextColor={'rgba(0, 0, 0, 0.37)'}
                   style={styles.input}
                   placeholder="12XXX... 345.."
                   value={item.value}
                   onChangeText={(text) => updateField(index, "value", text)}
                 />
                 <TouchableOpacity onPress={() => removeField(index)}>
-                  <Ionicons name="close-circle" size={24} color= "#dadadaff" />
+                  <Ionicons name="close-circle" size={24} color= "#000000ff" />
                 </TouchableOpacity>
               </View>
             ))}
 
             <TouchableOpacity style={styles.addBtn} onPress={addField}>
-              <Ionicons name="add-circle" size={22} color="#dadadaff" />
+              <Ionicons name="add-circle" size={22} color="#000000ff" />
               <Text style={styles.addBtnText}>Add Field</Text>
             </TouchableOpacity>
 
@@ -270,7 +284,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "500",
-    color: "#ffffff",
+    color: "#000000ff",
     marginVertical: 12,
     alignSelf: "center",
     textAlign: "center",
@@ -278,8 +292,9 @@ const styles = StyleSheet.create({
   formContainer: {
     backgroundColor: "rgba(0, 0, 0, 0.11)",
     padding: 5,
-    borderRadius: 20,
-    marginHorizontal: 6,
+    borderRadius: 10,
+    marginVertical: 10,
+    marginHorizontal:5,
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
@@ -295,7 +310,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    color: "#ffffff",
+    color: "#000000ff",
     fontWeight: "500",
   },
   removeButton: {
@@ -304,7 +319,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 10,
-    backgroundColor: "#ff4d4d10",
+    backgroundColor: "#ff4d4d04",
   },
   removeText: {
     color: "#ff4d4d",
@@ -314,27 +329,27 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "#ffffff0a",
+    backgroundColor: "#00000009",
     borderRadius: 18,
     marginRight: 10,
     borderWidth: 1,
-    borderColor: "#ffffff26",
+    borderColor: "#00000026",
   },
   chipSelected: {
-    backgroundColor: "#ffffff20",
-    borderColor: "#ffffff90",
+    backgroundColor: "#00000020",
+    borderColor: "#00000090",
   },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#ffffff26",
+    borderColor: "#00000026",
     padding: 12,
     borderRadius: 10,
     marginRight: 6,
     fontSize: 15,
     marginVertical: 5,
-    backgroundColor: "#ffffff0b",
-    color: "#ffffff",
+    backgroundColor: "#0000000b",
+    color: "#000000ff",
     fontWeight: "400",
   },
   fieldRow: {
@@ -351,7 +366,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   addBtnText: {
-    color: "#e0e0e0",
+    color: "#000000ff",
     fontSize: 16,
     marginLeft: 6,
   },

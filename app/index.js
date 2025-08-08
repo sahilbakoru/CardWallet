@@ -163,7 +163,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
                   style={styles.bigButton}
                   onPress={() => {
                     setModalVisible(false);
-                    router.push("/ManualInput");
+                    router.push("./tabs/ManualInput");
                   }}
                 >
                   <View style={styles.bigButtonContent}>
