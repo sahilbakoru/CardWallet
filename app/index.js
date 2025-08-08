@@ -1,9 +1,9 @@
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import { useNavigation, useRouter } from "expo-router";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
@@ -13,6 +13,7 @@ import {
   Modal,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   Vibration,
   View
@@ -33,13 +34,14 @@ const FULL_CARD_HEIGHT = CARD_HEIGHT + SPACING;
 // ];
 
 export default function Index() {
+    const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
 
 const [isGalleryOpening, setIsGalleryOpening] = useState(false);
 
   const [cards, setCards] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current;
-  const router = useRouter(); // ✅
+  const router = useRouter(); 
   const backgroundImage = require("../assets/Backround/CardBackround.png");
   useFocusEffect(
     React.useCallback(() => {
@@ -60,6 +62,43 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
       loadCards();
     }, [])
   );
+   // Set the header button
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleAlign: "center",
+       headerLeft: () => (
+      <View style={{marginLeft: 10 , borderColor:'white', borderWidth:1, padding:5, borderRadius:10}}>
+<Text style={{fontSize:18}} >True W</Text>
+      </View>// invisible spacer to balance right icon
+    ),
+      headerTitle: () => (
+       
+      <View style={styles.searchWrapper}>
+          <Ionicons name="search" size={18} color="#888" style={{ marginRight: 6 }} />
+          <TextInput
+            placeholder="Search..."
+            placeholderTextColor="#888"
+            style={styles.searchInput}
+          />
+        </View>
+
+    ),
+      headerRight: () => (
+        <TouchableOpacity
+          style={{ marginRight: 15, }}
+          onPress={() => {
+            //  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            Vibration.vibrate(60);
+            setModalVisible(true)
+            // You'll open modal here later
+            console.log("Add document pressed");
+          }}
+        >
+          <Ionicons name="add-circle-outline" size={30} color="#000000ff" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
@@ -183,7 +222,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
 
 
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.addButton}
           onPress={() => {
             //  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -194,7 +233,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
           }}
         >
           <Text style={{ fontSize: 40, color: 'rgba(173, 172, 172, 1)' }}>+</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Animated.FlatList
           data={cards}
           keyExtractor={(item) => item.id}
@@ -206,7 +245,6 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             { useNativeDriver: true }
           )}
-          scrollEventThrottle={5}
           renderItem={({ item, index }) => {
             const inputRange = [
               (index - 1) * FULL_CARD_HEIGHT,
@@ -331,6 +369,21 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+   searchWrapper: {
+    flexDirection:"row",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    height: 36,
+    width: 200, // small enough to leave room for icons
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    paddingVertical: 0,
+
   },
   card: {
     height: CARD_HEIGHT,
