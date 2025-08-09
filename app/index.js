@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRouter } from "expo-router";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
@@ -36,7 +36,8 @@ const FULL_CARD_HEIGHT = CARD_HEIGHT + SPACING;
 export default function Index() {
     const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState(''); // Add this state
+  const [filteredCards, setFilteredCards] = useState([]); // Add this state
 const [isGalleryOpening, setIsGalleryOpening] = useState(false);
 
   const [cards, setCards] = useState([]);
@@ -48,11 +49,12 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
       const loadCards = async () => {
         try {
           const stored = await AsyncStorage.getItem("documents");
-          console.log(stored,'stored')
+          // console.log(stored,'stored')
           if (stored) {
             const parsed = JSON.parse(stored);
-            console.log(parsed,'parsed')
+            // console.log(parsed,'parsed')
             setCards(parsed);
+             setFilteredCards(parsed); // Initialize filteredCards with all cards
           }
         } catch (e) {
           console.error("Failed to load documents:", e);
@@ -62,6 +64,26 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
       loadCards();
     }, [])
   );
+    useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredCards(cards);
+    } else {
+      const filtered = cards.filter(card => {
+        // Search in title
+        if (card.title && card.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+          return true;
+        }
+        // Search in fields
+        if (card.fields) {
+          return card.fields.some(field => 
+            field.value && field.value.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
+        return false;
+      });
+      setFilteredCards(filtered);
+    }
+  }, [searchQuery, cards]);
    // Set the header button
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -79,6 +101,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
             placeholder="Search..."
             placeholderTextColor="#888"
             style={styles.searchInput}
+            onChangeText={setSearchQuery} // Add this
           />
         </View>
 
@@ -98,7 +121,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
+  }, [navigation,searchQuery]);
 
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
@@ -235,7 +258,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
           <Text style={{ fontSize: 40, color: 'rgba(173, 172, 172, 1)' }}>+</Text>
         </TouchableOpacity> */}
         <Animated.FlatList
-          data={cards}
+          data={filteredCards}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
@@ -279,17 +302,19 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
                     styles.card,
                     {
                       transform: [{ scale }],
-                      opacity
+                      // opacity
                     },
                   ]}
                 >
                   {item.frontImage ? (
                     // 📷 Image-based card
+          
                     <Image
                       source={{ uri: item.frontImage }}
                       style={styles.cardImage}
                       resizeMode="cover"
                     />
+           
                   ) : (
                     // 📝 Manual card
                     <ImageBackground
@@ -300,6 +325,8 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
                         width: "100%",
                         borderRadius: 16,
                         overflow: "hidden",
+                        borderColor:'black',
+                        borderWidth:0.3
                       }}
                     >
                       <LinearGradient
@@ -391,20 +418,22 @@ const styles = StyleSheet.create({
     marginVertical: SPACING / 5,
     alignSelf: "center",
     borderRadius: 16,
-    backgroundColor: "#fffefeff",
+    backgroundColor: "#00000008",
     padding: 0,
     justifyContent: "space-between",
     shadowColor: "rgba(0, 0, 0, 1)",
     shadowOpacity: 0.3,
-    shadowRadius: 10,
+    shadowRadius: 16,
     shadowOffset: { width: 0, height: 3 },
     elevation: 5,
   },
   cardImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 16,
-    overflow: "hidden"
+    borderRadius: 15,
+    overflow: "hidden",
+      borderColor:'black',
+    borderWidth:0.5
 
   },
   addButton: {

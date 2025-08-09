@@ -1,10 +1,11 @@
-import { FontAwesome6, Ionicons } from '@expo/vector-icons';
+import { Feather, FontAwesome6, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
+import * as Clipboard from 'expo-clipboard';
 import * as FileSystem from "expo-file-system";
 import { LinearGradient } from 'expo-linear-gradient';
-
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
@@ -18,6 +19,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import ImageView from "react-native-image-viewing";
 
 const { width } = Dimensions.get("window");
 // ...imports stay unchanged
@@ -26,9 +28,41 @@ export default function CardDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [card, setCard] = useState(null);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const backgroundImage = require("../assets/Backround/CardBackround.png");
+    const [viewerVisible, setViewerVisible] = useState(false);
+  const [currentImage, setCurrentImage] = useState('');
+  const [visible, setIsVisible] = useState(false);
+  const [copiedItem, setCopiedItem] = useState(null);
 
+  const backgroundImage = require("../assets/Backround/CardBackround.png");
+  // Prepare images array
+  const images = [];
+  if (card?.frontImage) images.push({ uri: card.frontImage });
+  if (card?.backImage) images.push({ uri: card.backImage });
+
+// useFocusEffect(
+//   useCallback(() => {
+//     const fetchCard = async () => {
+//       try {
+//         const stored = await AsyncStorage.getItem("documents");
+//         const parsed = stored ? JSON.parse(stored) : [];
+//         const found = parsed.find((doc) => doc.id === id);
+//         console.log(found, 'card details');
+//         setCard(found);
+//       } catch (e) {
+//         console.error("Failed to load card:", e);
+//       }
+//     };
+
+//     fetchCard();
+//   }, [id])
+// );
+
+useFocusEffect(
+  useCallback(() => {
+    setIsFront(true);
+    flipAnim.setValue(0);
+  }, [])
+);
   useEffect(() => {
     const fetchCard = async () => {
       try {
@@ -37,6 +71,8 @@ export default function CardDetails() {
         const found = parsed.find((doc) => doc.id === id);
         console.log(found,'card details')
         setCard(found);
+          setIsFront(true);
+      flipAnim.setValue(0); 
       } catch (e) {
         console.error("Failed to load card:", e);
       }
@@ -112,11 +148,24 @@ const handleDelete = async () => {
     },
   ]);
 };
+  const handleCopy = async (text, fieldName) => {
+    try {
+      await Clipboard.setStringAsync(text);
+      console.log("item codded :" , text)
+      setCopiedItem(fieldName);
+  setTimeout(() => setCopiedItem(null), 1500); // Reset after 1.5 seconds
+      // Alert.alert('Copied!', 'Text copied to clipboard');
+    } catch (error) {
+      console.error('Failed to copy text:', error);
+      Alert.alert('Error', 'Failed to copy text');
+    }
+  };
+
 
   if (!card) return <Text style={{ color: "white", padding: 20 }}>Loading...</Text>;
 
-  const imageToShow = isFlipped && card.backImage ? card.backImage : card.frontImage;
-
+// Prepare images array
+ 
 return (
   // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
   //   <StatusBar style="dark" />
@@ -138,20 +187,20 @@ return (
     styles.card,
     { overflow: card?.backImage ? "visible" : "hidden" }
   ]} >
-  {card.frontImage ? (
+  {card?.frontImage ? (
     <>
       {/* Front Image */}
       <Animated.View
         style={[styles.flipCard, flipToFrontStyle, { zIndex: isFront ? 1 : 0 }]}
       >
         <Image
-          source={{ uri: card.frontImage }}
+          source={{ uri: card?.frontImage }}
           style={styles.cardImage}
         />
       </Animated.View>
 
       {/* Back Image */}
-      {card.backImage && (
+      {card?.backImage && (
         <Animated.View
           style={[
             styles.flipCard,
@@ -212,7 +261,7 @@ return (
             <View style={styles.flipButtonContent}>
               <FontAwesome6 name="arrows-rotate" size={18} color="white" />
               <Text style={styles.flipButtonText}>
-                {isFlipped ? "Show Front" : "Flip "}
+                {"Flip "}
               </Text>
             </View>
           </TouchableOpacity>
@@ -233,11 +282,21 @@ return (
 
     {/* Custom Fields (Dynamic) */}
     {card.fields?.map((field, index) => (
-      <View style={styles.detailRow} key={`field-${index}`}>
-        <Text style={styles.detailLabel}>{field.key.trim()}</Text>
-        <Text style={styles.detailValue}>{field.value}</Text>
-      </View>
-    ))}
+                  <View style={styles.detailRow} key={`field-${index}`}>
+                    <Text style={styles.detailLabel}>{field.key.trim()}</Text>
+                    <TouchableOpacity 
+                      style={styles.copyContainer}
+                      onPress={() => handleCopy(field.value, field.key)}
+                    >
+                      <Text style={styles.detailValue}>{field.value}</Text>
+                      {copiedItem === field.key ? (
+    <Feather name="check" size={16} color="lightgreen"  />
+  ) : (
+    <Feather name="copy" size={16} color="white"  />
+  )}
+                    </TouchableOpacity>
+                  </View>
+                ))}
 
     {/* Timestamp Row */}
     <View style={styles.detailRow}>
@@ -247,10 +306,28 @@ return (
       </Text>
     </View>
   </View>
-  <TouchableOpacity style={styles.actionButton} onPress={() => {/* Handle action */}}>
-    <Text style={styles.actionText}>View Images</Text>
-    <Ionicons name="arrow-forward" size={16} color="#ffffff" />
-  </TouchableOpacity>
+  <TouchableOpacity 
+        style={styles.actionButton} 
+        onPress={() => setViewerVisible(true)}
+        disabled={images.length === 0}
+      >
+        <Text style={styles.actionText}>
+          View Images ({images.length})
+        </Text>
+        <Ionicons name="arrow-forward" size={16} color="#ffffff" />
+      </TouchableOpacity>
+<ImageView
+        images={images}
+        imageIndex={0}
+        visible={viewerVisible}
+        onRequestClose={() => setViewerVisible(false)}
+        doubleTapToZoomEnabled
+        swipeToCloseEnabled
+        backgroundColor="rgba(0,0,0,0.9)"
+       
+        
+      />
+     
 </View>
 
         <Text style={styles.text}>Card ID: {id}</Text>
@@ -262,6 +339,7 @@ return (
      
     </LinearGradient>
      </ScrollView>
+   
   </ImageBackground>
   // </SafeAreaView>
 );
@@ -278,6 +356,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
    
   },
+
   container: {
     flex: 1,
     alignItems: "center",
@@ -334,7 +413,7 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backgroundColor: "rgba(0, 0, 0, 0.13)",
     borderRadius: 20,
     padding: 20,
     marginVertical: 10,
@@ -383,7 +462,35 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: "#f1f1f1",
     textAlign: "right",
-    maxWidth: "60%",
+    maxWidth: "100%",
+    paddingHorizontal: 4, 
+    paddingVertical:2
+    //    borderColor:'black',
+    // borderWidth:1
+  },
+   copyContainer: {
+    flexDirection: 'row',
+    alignItems: "center",
+ 
+  },
+  copyIcon: {
+    marginLeft: 2,
+  },
+  viewerContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullscreenImage: {
+    width: '100%',
+    height: '100%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    zIndex: 1,
   },
   actionButton: {
     flexDirection: "row",
