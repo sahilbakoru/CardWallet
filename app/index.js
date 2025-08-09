@@ -38,6 +38,7 @@ export default function Index() {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState(''); // Add this state
   const [filteredCards, setFilteredCards] = useState([]); // Add this state
+
 const [isGalleryOpening, setIsGalleryOpening] = useState(false);
 
   const [cards, setCards] = useState([]);
@@ -89,8 +90,8 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
     navigation.setOptions({
       headerTitleAlign: "center",
        headerLeft: () => (
-      <View style={{marginLeft: 10 , borderColor:'white', borderWidth:1, padding:5, borderRadius:10}}>
-<Text style={{fontSize:18}} >True W</Text>
+      <View style={{marginLeft: 10 , borderColor:'black', borderWidth:0, padding:5, borderRadius:10}}>
+<Image style={{width:40, height:40}} source={require('../assets/images/icon.png')} />
       </View>// invisible spacer to balance right icon
     ),
       headerTitle: () => (
@@ -257,6 +258,38 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
         >
           <Text style={{ fontSize: 40, color: 'rgba(173, 172, 172, 1)' }}>+</Text>
         </TouchableOpacity> */}
+        {filteredCards.length === 0 ? (
+  <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 20 }}>
+    <Image
+      source={require("../assets/images/emptyWallet.png")} // <-- place your empty state image here
+      style={{
+        width: 180,
+        height: 180,
+        marginBottom: 20,
+        resizeMode: "contain"
+      }}
+    />
+    <Text style={{ fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 8 }}>
+      You have no cards
+    </Text>
+    <Text style={{ fontSize: 16, color: "#555", textAlign: "center", marginBottom: 20 }}>
+      Looks like you don’t have any cards or documents saved at the moment.
+    </Text>
+    <TouchableOpacity
+      style={{
+        backgroundColor: "#000",
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 10
+      }}
+      onPress={() => setModalVisible(true)}
+    >
+      <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>
+        Add Card
+      </Text>
+    </TouchableOpacity>
+  </View>
+) : (
         <Animated.FlatList
           data={filteredCards}
           keyExtractor={(item) => item.id}
@@ -384,7 +417,8 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
             );
           }}
 
-        />
+        /> 
+        )}
       </LinearGradient>
 
     </ImageBackground>
