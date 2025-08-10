@@ -24,7 +24,7 @@ export default function SettingsScreen() {
       id: 'free',
       name: 'Free Plan',
       price: '$0/month',
-      features: [ 'No Ads', '10 Card', 'Standard support'],
+      features: [ 'No Ads', '7 Card', 'Standard support'],
       color: '#6c757d'
     },
     // {

@@ -270,7 +270,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
       }}
     />
     <Text style={{ fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 8 }}>
-      You have no cards
+      You Have No Cards
     </Text>
     <Text style={{ fontSize: 16, color: "#555", textAlign: "center", marginBottom: 20 }}>
       Looks like you don’t have any cards or documents saved at the moment.
