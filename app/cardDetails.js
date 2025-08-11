@@ -176,7 +176,7 @@ return (
   >
      < ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} >
     <LinearGradient
-      colors={["rgba(203, 163, 3, 0.1)", "rgba(255, 255, 255, 1)","rgba(255, 255, 255, 1)"]}
+      colors={["rgba(179, 154, 52, 0.24)","rgba(255, 255, 255, 1)","rgba(255, 255, 255, 1)","rgba(255, 255, 255, 1)",]}
         // colors={["rgba(255, 208, 147, 0.56)", "rgba(133, 216, 255, 0.48)", "rgba(255, 174, 239, 0.52)",]}
       style={styles.gradientOverlay}
     >
