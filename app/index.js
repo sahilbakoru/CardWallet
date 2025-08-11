@@ -340,7 +340,7 @@ export default function Index() {
                       styles.card,
                       {
                         transform: [{ scale }],
-                        opacity
+                        // opacity
                       },
                     ]}
                   >

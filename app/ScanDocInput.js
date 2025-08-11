@@ -248,7 +248,19 @@ useFocusEffect(
               <Text style={styles.addBtnText}>Add Field</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
+              style={[
+                styles.saveButton,
+                !frontImage ? styles.disabled : {},
+              ]}
+              onPress={saveCard}
+              disabled={!frontImage ? true : false}
+            >
+              <Text style={styles.saveText}>Save Card</Text>
+            </TouchableOpacity> */}
+            </View>
+          </ScrollView>
+      <TouchableOpacity
               style={[
                 styles.saveButton,
                 !frontImage ? styles.disabled : {},
@@ -258,9 +270,6 @@ useFocusEffect(
             >
               <Text style={styles.saveText}>Save Card</Text>
             </TouchableOpacity>
-            </View>
-          </ScrollView>
-  
         </KeyboardAvoidingView>
         </LinearGradient>
       </ImageBackground>
@@ -290,7 +299,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   formContainer: {
-    backgroundColor: "rgba(0, 0, 0, 0.11)",
+    backgroundColor: "rgba(0, 0, 0, 0.03)",
     padding: 5,
     borderRadius: 10,
     marginVertical: 10,
@@ -376,7 +385,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     marginHorizontal: 16,
-marginVertical:5,
+marginVertical:15,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 6,

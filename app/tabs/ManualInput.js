@@ -1,10 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-  Keyboard,
+  Dimensions,
+  ImageBackground,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -12,10 +14,9 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View
 } from "react-native";
-
+const { width } = Dimensions.get("window");
 const PRESET_TITLES = [
   "License",
   "Payment Card",
@@ -32,7 +33,7 @@ export default function ManualInput() {
   const [customTitle, setCustomTitle] = useState("");
   const [showCustomInput, setShowCustomInput] = useState(false);
   const router = useRouter();
-
+  const backgroundImage = require("../../assets/Backround/CardBackround.png");
   const addField = () => setFields([...fields, { key: "", value: "" }]);
 
   const removeField = (index) => {
@@ -78,7 +79,7 @@ useFocusEffect(
 return (
   // <SafeAreaView style={{ flex: 1,backgroundColor: 'grey'  }}>
   //       <StatusBar style="dark" />
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    // <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
   <KeyboardAvoidingView
     style={{ flex: 1 }}
     behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -89,10 +90,46 @@ return (
       keyboardShouldPersistTaps="handled"
       style={{ backgroundColor: 'white' }}
     >
+      <View style={styles.formContainer} >
       <View style={styles.container}>
         <Text style={styles.title}>Add Document Details</Text>
+     <View style={styles.card} >
 
-        <Text style={styles.label}>Select a Title</Text>
+    <ImageBackground
+                          source={backgroundImage}
+                          imageStyle={{ borderRadius: 16, opacity: 1 }}
+                          style={{
+                            height: "100%",
+                            width: "100%",
+                            borderRadius: 16,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <LinearGradient
+                            colors={["#8abc7f53", "#e1857e4e", "#7fbcb853", "#c6c85b4a"]}
+                            style={{
+                              height: "100%",
+                              width: "100%",
+                              borderRadius: 16,
+                              padding: 20,
+                              justifyContent: "center",
+                            }}
+                          >
+        <Text style={styles.cardTitle}>
+          {showCustomInput ? customTitle : title || "Untitled"}
+        </Text>
+        {fields?.slice(0, 3).map((field, index) => (
+          <View key={`field-${index}`}>
+            <Text style={styles.cardField}>
+              {field.key}:{" "}
+              <Text style={styles.cardFieldValue}>{field.value}</Text>
+            </Text>
+          </View>
+        ))}
+      </LinearGradient>
+    </ImageBackground>
+</View>
+     
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {PRESET_TITLES.map((item) => (
             <TouchableOpacity
@@ -117,7 +154,7 @@ return (
                 style={{
                   color:
                     title === item || (item === "Other" && showCustomInput)
-                      ? "#fff"
+                      ? "#333"
                       : "#333",
                 }}
               >
@@ -142,14 +179,16 @@ return (
           {fields.map((item, index) => (
             <View style={styles.fieldRow} key={index}>
               <TextInput
+               placeholderTextColor={'rgba(0, 0, 0, 0.37)'}
                 style={styles.input}
-                placeholder="Label"
+                 placeholder= {"Name... "} 
                 value={item.key}
                 onChangeText={(text) => updateField(index, "key", text)}
               />
               <TextInput
+               placeholderTextColor={'rgba(0, 0, 0, 0.37)'}
                 style={styles.input}
-                placeholder="Value"
+               placeholder="XXX..345.."
                 value={item.value}
                 onChangeText={(text) => updateField(index, "value", text)}
               />
@@ -161,11 +200,29 @@ return (
         </View>
 
         <TouchableOpacity style={styles.addBtn} onPress={addField}>
-          <Ionicons name="add-circle" size={22} color="#007AFF" />
+          <Ionicons name="add-circle" size={22} color="#000000ff"  />
           <Text style={styles.addBtnText}>Add Field</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
+          style={[
+            styles.saveBtn,
+            !fields.some((f) => f.key && f.value) || (!title && !customTitle)
+              ? styles.disabled
+              : {},
+          ]}
+          onPress={saveCard}
+          disabled={
+            !fields.some((f) => f.key && f.value) || (!title && !customTitle)
+          }
+        >
+          <Text style={styles.saveBtnText}>Save Card</Text>
+        </TouchableOpacity> */}
+      </View>
+      </View>
+    </ScrollView>
+    <View style={{ backgroundColor: "#ffffffff",}}>
+      <TouchableOpacity
           style={[
             styles.saveBtn,
             !fields.some((f) => f.key && f.value) || (!title && !customTitle)
@@ -179,11 +236,10 @@ return (
         >
           <Text style={styles.saveBtnText}>Save Card</Text>
         </TouchableOpacity>
-      </View>
-    </ScrollView>
+        </View>
     
   </KeyboardAvoidingView>
-  </TouchableWithoutFeedback>
+  // </TouchableWithoutFeedback>
   // </SafeAreaView>
 );
 
@@ -193,74 +249,103 @@ const styles = StyleSheet.create({
   container: {
     padding: 1,
     paddingBottom:20,
-    marginVertical:40,
+    marginVertical:10,
 
   },
   title: {
     fontSize: 22,
     fontWeight: "600",
-    marginBottom: 46,
-    marginVertical:10,
+    marginBottom: 10,
     marginHorizontal:10,
     alignSelf:'center'
+  },
+    card: {
+    width: width - 40,
+    height: 230,
+    borderRadius: 20,
+    marginBottom: 24,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    overflow: "hidden",
+    alignSelf:'center'
+  },
+   cardTitle: {
+    fontSize: 22,
+    fontWeight: "600",
+    color: "#000000ff",
+    textTransform: "capitalize",
   },
   label: {
     fontSize: 16,
     fontWeight: "500",
     marginBottom: 8,
-        marginHorizontal:10
+    marginHorizontal:10
   },
-  chip: {
-    paddingHorizontal: 14,
+    formContainer: {
+    backgroundColor: "rgba(0, 0, 0, 0.03)",
+    padding: 5,
+    borderRadius: 10,
+    marginVertical: 10,
+    marginHorizontal:5,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+   chip: {
+    paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 20,
-    marginRight: 8,
-    borderColor:'black',
-    borderWidth:0.5,
-        marginHorizontal:10
+    backgroundColor: "#00000009",
+    borderRadius: 18,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: "#00000026",
   },
-  chipSelected: {
-    backgroundColor: "#007AFF",
-     borderWidth:0,
+ chipSelected: {
+    backgroundColor: "#00000020",
+    borderColor: "#00000090",
   },
   fieldRow: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 12,
-    marginHorizontal:10
+    marginHorizontal: 10,
   },
-  input: {
+input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 8,
-    marginRight: 8,
+    borderColor: "#00000026",
+    padding: 12,
+    borderRadius: 10,
+    marginRight: 6,
     fontSize: 15,
-    marginVertical:5,
+    marginVertical: 5,
+    backgroundColor: "#0000000b",
+    color: "#000000ff",
+    fontWeight: "400",
   },
-  addBtn: {
+    addBtn: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
-    marginBottom: 20,
-    marginHorizontal:10,
-    justifyContent:'center',
+    marginLeft: 12,
+    marginBottom: 24,
+    marginTop: 8,
   },
   addBtnText: {
-    color: "#007AFF",
+    color: "#000000ff",
     fontSize: 16,
     marginLeft: 6,
-   marginHorizontal:10,
-   marginVertical:10
   },
   saveBtn: {
-    backgroundColor: "#000",
-    paddingVertical: 14,
-    borderRadius: 10,
+     backgroundColor: "#2C3E50",
+    paddingVertical: 16,
+    borderRadius: 14,
     alignItems: "center",
-        marginHorizontal:10
+    marginHorizontal: 16,
+marginVertical:15,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
   saveBtnText: {
     color: "#fff",

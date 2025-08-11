@@ -6,9 +6,10 @@ export default function RootLayout() {
   return (
 
     <Tabs screenOptions={{ tabBarActiveTintColor: 'black',
-  headerStyle: {
-      // backgroundColor: 'rgba(0, 0, 0, 0.44)', // Overrides the global headerStyle for this screen
-    },
+      // headerTransparent: true, 
+  // headerStyle: {
+  //      backgroundColor: 'rgba(0, 0, 0, 0.44)', // Overrides the global headerStyle for this screen
+  //   },
       // tabBarShowLabel:false, 
     }}
   
@@ -41,8 +42,17 @@ export default function RootLayout() {
         }}
       />
         <Tabs.Screen
+       
         name="cardDetails"
         options={{
+           title:'Card Details',
+          //  headerStyle: {
+          //   backgroundColor: '#ffffffd7', // Set your desired header background color here
+          // },
+          // headerTintColor: '#000000ff', // Optional: Set the color of the header title and back button
+          headerTitleStyle: {
+            // fontWeight: 'bold', // Optional: Customize header title style
+          },
           href: null,
         }}
       />
