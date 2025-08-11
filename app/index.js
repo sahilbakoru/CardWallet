@@ -34,16 +34,16 @@ const FULL_CARD_HEIGHT = CARD_HEIGHT + SPACING;
 // ];
 
 export default function Index() {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState(''); // Add this state
   const [filteredCards, setFilteredCards] = useState([]); // Add this state
 
-const [isGalleryOpening, setIsGalleryOpening] = useState(false);
+  const [isGalleryOpening, setIsGalleryOpening] = useState(false);
 
   const [cards, setCards] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current;
-  const router = useRouter(); 
+  const router = useRouter();
   const backgroundImage = require("../assets/Backround/CardBackround.png");
   useFocusEffect(
     React.useCallback(() => {
@@ -55,7 +55,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
             const parsed = JSON.parse(stored);
             // console.log(parsed,'parsed')
             setCards(parsed);
-             setFilteredCards(parsed); // Initialize filteredCards with all cards
+            setFilteredCards(parsed); // Initialize filteredCards with all cards
           }
         } catch (e) {
           console.error("Failed to load documents:", e);
@@ -65,7 +65,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
       loadCards();
     }, [])
   );
-    useEffect(() => {
+  useEffect(() => {
     if (searchQuery.trim() === '') {
       setFilteredCards(cards);
     } else {
@@ -76,7 +76,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
         }
         // Search in fields
         if (card.fields) {
-          return card.fields.some(field => 
+          return card.fields.some(field =>
             field.value && field.value.toLowerCase().includes(searchQuery.toLowerCase())
           );
         }
@@ -85,18 +85,22 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
       setFilteredCards(filtered);
     }
   }, [searchQuery, cards]);
-   // Set the header button
+  // Set the header button
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleAlign: "center",
-       headerLeft: () => (
-      <View style={{marginLeft: 10 , borderColor:'black', borderWidth:0, padding:5, borderRadius:10}}>
-<Image style={{width:40, height:40}} source={require('../assets/images/icon.png')} />
-      </View>// invisible spacer to balance right icon
-    ),
+      headerLeft: () => (
+        <View style={{ marginLeft: 10, 
+        // borderColor: 'black', 
+        // borderWidth: 0, 
+        padding: 0, borderRadius: 1, width: '160%' }}>
+          <Text style={{ fontSize: 17, fontWeight: '700', color: 'rgb(6, 63, 12)' }}>True Wallet</Text>
+          {/* <Image style={{width:40, height:40}} source={require('../assets/images/icon.png')} /> */}
+        </View>// invisible spacer to balance right icon
+      ),
       headerTitle: () => (
-       
-      <View style={styles.searchWrapper}>
+
+        <View style={styles.searchWrapper}>
           <Ionicons name="search" size={18} color="#888" style={{ marginRight: 6 }} />
           <TextInput
             placeholder="Search..."
@@ -106,10 +110,10 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
           />
         </View>
 
-    ),
+      ),
       headerRight: () => (
         <TouchableOpacity
-          style={{ marginRight: 15, }}
+          style={{ marginRight: 20, }}
           onPress={() => {
             //  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             Vibration.vibrate(60);
@@ -122,40 +126,41 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
         </TouchableOpacity>
       ),
     });
-  }, [navigation,searchQuery]);
+  }, [navigation, searchQuery]);
 
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
-      
-      // <StatusBar style="dark" />
+
+    // <StatusBar style="dark" />
     <ImageBackground
       source={require('../assets/Backround/backround.png')}
       style={styles.container}
       resizeMode="cover"
     >
       <LinearGradient
-        colors={["rgba(255, 208, 147, 0.56)", "rgba(133, 216, 255, 0.48)", "rgba(255, 174, 239, 0.52)",]}
+        colors={["rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)"]}
+        // colors={["rgba(255, 208, 147, 0.56)", "rgba(133, 216, 255, 0.48)", "rgba(255, 174, 239, 0.52)",]}
         style={styles.container}
       >
         {isGalleryOpening && (
-  <Modal transparent animationType="fade">
-    <View style={{
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}>
-      <View style={{
-        padding: 20,
-        backgroundColor: 'white',
-        borderRadius: 10
-      }}>
-        <Text style={{ marginBottom: 10 }}>Opening Gallery...</Text>
-        <ActivityIndicator size="large" color="#000" />
-      </View>
-    </View>
-  </Modal>
-)}
+          <Modal transparent animationType="fade">
+            <View style={{
+              flex: 1,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <View style={{
+                padding: 20,
+                backgroundColor: 'white',
+                borderRadius: 10
+              }}>
+                <Text style={{ marginBottom: 10 }}>Opening Gallery...</Text>
+                <ActivityIndicator size="large" color="#000" />
+              </View>
+            </View>
+          </Modal>
+        )}
 
         {modalVisible && (
           <Modal
@@ -193,9 +198,9 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
                   style={styles.bigButton}
                   onPress={async () => {
                     setModalVisible(false);
-                     setIsGalleryOpening(true);
+                    setIsGalleryOpening(true);
                     await pickImage(async (uri) => {
-                     
+
                       const newDoc = {
                         id: Date.now().toString(),
                         frontImage: uri,
@@ -213,7 +218,7 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
                         console.error("Failed to save document from gallery:", e);
                       }
                     });
-                     setIsGalleryOpening(false);
+                    setIsGalleryOpening(false);
                   }}
                 >
                   <View style={styles.bigButtonContent}>
@@ -259,170 +264,170 @@ const [isGalleryOpening, setIsGalleryOpening] = useState(false);
           <Text style={{ fontSize: 40, color: 'rgba(173, 172, 172, 1)' }}>+</Text>
         </TouchableOpacity> */}
         {filteredCards.length === 0 ? (
-  <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 20 }}>
-    <Image
-      source={require("../assets/images/emptyWallet.png")} // <-- place your empty state image here
-      style={{
-        width: 180,
-        height: 180,
-        marginBottom: 20,
-        resizeMode: "contain"
-      }}
-    />
-    <Text style={{ fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 8 }}>
-      You Have No Cards
-    </Text>
-    <Text style={{ fontSize: 16, color: "#555", textAlign: "center", marginBottom: 20 }}>
-      Looks like you don’t have any cards or documents saved at the moment.
-    </Text>
-    <TouchableOpacity
-      style={{
-        backgroundColor: "#000",
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 10
-      }}
-      onPress={() => setModalVisible(true)}
-    >
-      <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>
-        Add Card
-      </Text>
-    </TouchableOpacity>
-  </View>
-) : (
-        <Animated.FlatList
-          data={filteredCards}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingVertical: (height - CARD_HEIGHT) / 2.5,  // chnage the cards position on screen 
-          }}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true }
-          )}
-          renderItem={({ item, index }) => {
-            const inputRange = [
-              (index - 1) * FULL_CARD_HEIGHT,
-              index * FULL_CARD_HEIGHT,
-              (index + 1) * FULL_CARD_HEIGHT,
-            ];
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 20 }}>
+            <Image
+              source={require("../assets/images/emptyWallet.png")} // <-- place your empty state image here
+              style={{
+                width: 180,
+                height: 180,
+                marginBottom: 20,
+                resizeMode: "contain"
+              }}
+            />
+            <Text style={{ fontSize: 24, fontWeight: "bold", color: "#000", marginBottom: 8 }}>
+              You Have No Cards
+            </Text>
+            <Text style={{ fontSize: 16, color: "#555", textAlign: "center", marginBottom: 20 }}>
+              Looks like you don’t have any cards or documents saved at the moment.
+            </Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#000",
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                borderRadius: 10
+              }}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>
+                Add Card
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <Animated.FlatList
+            data={filteredCards}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingVertical: (height - CARD_HEIGHT) / 2.5,  // chnage the cards position on screen 
+            }}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: true }
+            )}
+            renderItem={({ item, index }) => {
+              const inputRange = [
+                (index - 1) * FULL_CARD_HEIGHT,
+                index * FULL_CARD_HEIGHT,
+                (index + 1) * FULL_CARD_HEIGHT,
+              ];
 
-            const scale = scrollY.interpolate({
-              inputRange,
-              outputRange: [0.8, 1.15, 0.8],
-              extrapolate: "clamp",
-            });
+              const scale = scrollY.interpolate({
+                inputRange,
+                outputRange: [0.8, 1.15, 0.8],
+                extrapolate: "clamp",
+              });
 
-            const opacity = scrollY.interpolate({
-              inputRange,
-              outputRange: [0.4, 1, 0.4],
-              extrapolate: "clamp",
-            });
+              const opacity = scrollY.interpolate({
+                inputRange,
+                outputRange: [0.5, 1, 0.5],
+                extrapolate: "clamp",
+              });
 
-            return (
-              <TouchableOpacity
-              activeOpacity={0.8}
-                onPress={() => {
-                  router.push({
-                    pathname: "/cardDetails",
-                    params: { id: item.id },
-                  });
-                }}
-              >
-                <Animated.View
-                  style={[
-                    styles.card,
-                    {
-                      transform: [{ scale }],
-                      // opacity
-                    },
-                  ]}
+              return (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    router.push({
+                      pathname: "/cardDetails",
+                      params: { id: item.id },
+                    });
+                  }}
                 >
-                  {item.frontImage ? (
-                    // 📷 Image-based card
-          
-                    <Image
-                      source={{ uri: item.frontImage }}
-                      style={styles.cardImage}
-                      resizeMode="cover"
-                    />
-           
-                  ) : (
-                    // 📝 Manual card
-                    <ImageBackground
-                      source={backgroundImage}
-                      imageStyle={{ borderRadius: 16, opacity: 1 }}
-                      style={{
-                        height: "100%",
-                        width: "100%",
-                        borderRadius: 16,
-                        overflow: "hidden",
-                        borderColor:'black',
-                        borderWidth:0.3
-                      }}
-                    >
-                      <LinearGradient
-                        colors={["#8abc7f53", "#e1857e4e", "#7fbcb853", "#c6c85b4a"]}
+                  <Animated.View
+                    style={[
+                      styles.card,
+                      {
+                        transform: [{ scale }],
+                        opacity
+                      },
+                    ]}
+                  >
+                    {item.frontImage ? (
+                      // 📷 Image-based card
+
+                      <Image
+                        source={{ uri: item.frontImage }}
+                        style={styles.cardImage}
+                        resizeMode="cover"
+                      />
+
+                    ) : (
+                      // 📝 Manual card
+                      <ImageBackground
+                        source={backgroundImage}
+                        imageStyle={{ borderRadius: 16, opacity: 1 }}
                         style={{
                           height: "100%",
                           width: "100%",
                           borderRadius: 16,
-                          padding: 20,
-                          justifyContent: "center",
+                          overflow: "hidden",
+                          borderColor: 'black',
+                          borderWidth: 0.3
                         }}
                       >
-                        <Text
-                          key={`${item.id}`}
+                        <LinearGradient
+                          colors={["#8abc7f53", "#e1857e4e", "#7fbcb853", "#c6c85b4a"]}
                           style={{
-                            fontSize: 20,
-                            fontWeight: "700",
-                            color: "#000000ff",
-                            marginBottom: 12,
-                            letterSpacing: 1.2,
-                            textAlign: 'center'
+                            height: "100%",
+                            width: "100%",
+                            borderRadius: 16,
+                            padding: 20,
+                            justifyContent: "center",
                           }}
                         >
-                          {item?.title || "Untitled"}
-                        </Text>
+                          <Text
+                            key={`${item.id}`}
+                            style={{
+                              fontSize: 20,
+                              fontWeight: "700",
+                              color: "#000000ff",
+                              marginBottom: 12,
+                              letterSpacing: 1.2,
+                              textAlign: 'center'
+                            }}
+                          >
+                            {item?.title || "Untitled"}
+                          </Text>
 
-                        {item.fields.slice(0, 2)?.map((field, index) => (
-                          <View key={`field-${index}-${item.timestamp}`}>
-                            <Text
-                              style={{
-                                fontSize: 15,
-                                fontWeight: "500",
-                                color: "#000000ff",
-                                marginBottom: 6,
-                              }}
-                            >
-                              {field.key}:{" "}
-                              <Text style={{ color: "#454545ff", fontWeight: "600" }}>
-                                {field.value}
+                          {item.fields.slice(0, 2)?.map((field, index) => (
+                            <View key={`field-${index}-${item.timestamp}`}>
+                              <Text
+                                style={{
+                                  fontSize: 15,
+                                  fontWeight: "500",
+                                  color: "#000000ff",
+                                  marginBottom: 6,
+                                }}
+                              >
+                                {field.key}:{" "}
+                                <Text style={{ color: "#454545ff", fontWeight: "600" }}>
+                                  {field.value}
+                                </Text>
                               </Text>
-                            </Text>
-                          </View>
-                        ))}
+                            </View>
+                          ))}
 
 
 
-                      </LinearGradient>
-                    </ImageBackground>
+                        </LinearGradient>
+                      </ImageBackground>
 
 
 
-                  )}
-                </Animated.View>
-              </TouchableOpacity>
-            );
-          }}
+                    )}
+                  </Animated.View>
+                </TouchableOpacity>
+              );
+            }}
 
-        /> 
+          />
         )}
       </LinearGradient>
 
     </ImageBackground>
-    
+
     // {/* </SafeAreaView> */}
   );
 }
@@ -431,14 +436,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-   searchWrapper: {
-    flexDirection:"row",
+  searchWrapper: {
+    flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f0f0f0",
     borderRadius: 8,
     paddingHorizontal: 10,
     height: 36,
     width: 200, // small enough to leave room for icons
+    marginLeft: 30
   },
   searchInput: {
     flex: 1,
@@ -466,8 +472,8 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 15,
     overflow: "hidden",
-      borderColor:'black',
-    borderWidth:0.5
+    borderColor: 'black',
+    borderWidth: 0.5
 
   },
   addButton: {

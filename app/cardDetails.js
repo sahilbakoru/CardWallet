@@ -176,7 +176,8 @@ return (
   >
      < ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} >
     <LinearGradient
-      colors={["rgba(79, 65, 47, 0.7)", "rgba(48, 81, 96, 0.55)", "rgba(75, 49, 70, 0.78)",]}
+      colors={["rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)"]}
+        // colors={["rgba(255, 208, 147, 0.56)", "rgba(133, 216, 255, 0.48)", "rgba(255, 174, 239, 0.52)",]}
       style={styles.gradientOverlay}
     >
     
@@ -259,7 +260,7 @@ return (
         {card.backImage && (
           <TouchableOpacity style={styles.flipButton} onPress={triggerFlip}>
             <View style={styles.flipButtonContent}>
-              <FontAwesome6 name="arrows-rotate" size={18} color="white" />
+              <FontAwesome6 name="arrows-rotate" size={18} color="rgb(0,0,0)" />
               <Text style={styles.flipButtonText}>
                 {"Flip "}
               </Text>
@@ -290,9 +291,9 @@ return (
                     >
                       <Text style={styles.detailValue}>{field.value}</Text>
                       {copiedItem === field.key ? (
-    <Feather name="check" size={16} color="lightgreen"  />
+    <Feather name="check" size={17} color="rgba(39, 131, 0, 1)"  />
   ) : (
-    <Feather name="copy" size={16} color="white"  />
+    <Feather name="copy" size={16} color="rgb(0,0,0)"  />
   )}
                     </TouchableOpacity>
                   </View>
@@ -314,7 +315,7 @@ return (
         <Text style={styles.actionText}>
           View Images ({images.length})
         </Text>
-        <Ionicons name="arrow-forward" size={16} color="#ffffff" />
+        <Ionicons name="arrow-forward" size={16} color="#000000ff" />
       </TouchableOpacity>
 <ImageView
         images={images}
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
     backfaceVisibility: "hidden",
   },
   flipButton: {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "rgba(0, 0, 0, 0.08)",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 30,
@@ -404,7 +405,7 @@ const styles = StyleSheet.create({
   flipButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#ffffff",
+    color: "#000000ff",
     marginLeft: 8,
   },
   flipButtonContent: {
@@ -425,13 +426,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#ffffff22",
+    borderBottomColor: "#00000022",
     paddingBottom: 10,
   },
   cardTitle: {
     fontSize: 22,
     fontWeight: "600",
-    color: "#ffffff",
+    color: "#000000ff",
     textTransform: "capitalize",
   },
   statusIndicator: {
@@ -449,18 +450,18 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingVertical: 4,
     borderBottomWidth: 0.5,
-    borderBottomColor: "#ffffff15",
+    borderBottomColor: "#00000015",
   },
   detailLabel: {
     fontSize: 15,
     fontWeight: "500",
-    color: "#ffffffdd",
+    color: "#000000dd",
     textTransform: "capitalize",
   },
   detailValue: {
     fontSize: 15,
     fontWeight: "400",
-    color: "#f1f1f1",
+    color: "#000000ff",
     textAlign: "right",
     maxWidth: "100%",
     paddingHorizontal: 4, 
@@ -499,17 +500,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
     marginTop: 20,
-    backgroundColor: "#ffffff10",
+    backgroundColor: "#00000010",
   },
   actionText: {
-    color: "#ffffff",
+    color: "#000000ff",
     fontSize: 16,
     fontWeight: "600",
     marginRight: 8,
   },
   text: {
     fontSize: 13,
-    color: "#aaaaaa",
+    color: "#808080ff",
     marginTop: 10,
     marginBottom: 20,
   },

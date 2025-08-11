@@ -66,7 +66,7 @@ export default function SettingsScreen() {
         {/* User Profile Card */}
         <View style={[styles.profileCard, isDarkMode && styles.darkCard]}>
           <Image
-            source={require('../assets/images/icon.png')}
+            source={require('../assets/images/react-logo.png')}
             style={styles.avatar}
           />
           <View style={styles.profileInfo}>

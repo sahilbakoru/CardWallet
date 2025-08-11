@@ -1,5 +1,5 @@
+import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome from '@expo/vector-icons/Octicons';
 import { Tabs } from "expo-router";
 export default function RootLayout() {
@@ -21,10 +21,9 @@ export default function RootLayout() {
       />
       <Tabs.Screen
         name="ScanDocInput"
-
         options={{
           title: 'scan',
-          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="credit-card-scan" size={28} color={color} />,
+          tabBarIcon: ({ color }) => <AntDesign name="scan1" size={28} color={color} />,
         }}
       />
       <Tabs.Screen
