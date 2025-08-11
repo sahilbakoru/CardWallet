@@ -184,7 +184,7 @@ useFocusEffect(
 />
             {/* Form Section */}
 
-          
+           <View style={styles.formContainer} >
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
               {PRESET_TITLES.map((item) => (
                 <TouchableOpacity
@@ -247,7 +247,7 @@ useFocusEffect(
               <Ionicons name="add-circle" size={22} color="#000000ff" />
               <Text style={styles.addBtnText}>Add Field</Text>
             </TouchableOpacity>
-
+</View>
             {/* <TouchableOpacity
               style={[
                 styles.saveButton,
@@ -260,6 +260,27 @@ useFocusEffect(
             </TouchableOpacity> */}
             </View>
           </ScrollView>
+          <View
+              style={{
+                backgroundColor: "rgba(0,0,0,0.05)",
+                borderRadius: 10,
+                marginHorizontal: 16,
+                paddingVertical: 8,
+                paddingHorizontal: 12,
+                marginTop: 10,
+                marginBottom: 5,
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "rgba(0,0,0,0.7)",
+                  fontSize: 13,
+                  fontWeight: "500",
+                }}
+              >
+                🔒 Because of privacy, all cards and files are stored only on your device.
+              </Text></View>
       <TouchableOpacity
               style={[
                 styles.saveButton,
@@ -302,7 +323,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.03)",
     padding: 5,
     borderRadius: 10,
-    marginVertical: 10,
+    marginVertical: 5,
     marginHorizontal:5,
     shadowColor: "#000",
     shadowOpacity: 0.05,
