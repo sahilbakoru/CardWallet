@@ -92,7 +92,7 @@ return (
     >
       <View style={styles.formContainer} >
       <View style={styles.container}>
-        <Text style={styles.title}>Add Document Details</Text>
+        <Text style={styles.title}>Create Document</Text>
      <View style={styles.card} >
 
     <ImageBackground
