@@ -16,7 +16,12 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.sahilbakoru.CardWallet"
     },
     "web": {
       "bundler": "metro",
@@ -24,7 +29,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-       [
+      [
         "expo-camera",
         {
           "cameraPermission": "Allow $(Wallet) to access your camera",
@@ -33,11 +38,11 @@
         }
       ],
       [
-      "expo-image-picker",
-      {
-        "cameraPermission": "Allow the app to use your camera."
-      }
-    ],
+        "expo-image-picker",
+        {
+          "cameraPermission": "Allow the app to use your camera."
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -51,6 +56,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "37776734-39b6-4b2c-a568-7ad37b720c03"
+      }
     }
   }
 }

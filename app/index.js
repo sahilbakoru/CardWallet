@@ -18,6 +18,7 @@ import {
   Vibration,
   View
 } from "react-native";
+import clearCache from './components/ClearCache';
 const { height, width } = Dimensions.get("window");
 const CARD_HEIGHT = 230;
 const SPACING = 20;
@@ -44,9 +45,8 @@ export default function Index() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const router = useRouter();
   const backgroundImage = require("../assets/Backround/CardBackround.png");
-  useFocusEffect(
-    React.useCallback(() => {
-      const loadCards = async () => {
+
+        const loadCards = async () => {
         try {
           const stored = await AsyncStorage.getItem("documents");
           // console.log(stored,'stored')
@@ -60,10 +60,20 @@ export default function Index() {
           console.error("Failed to load documents:", e);
         }
       };
-
+      const handleClearCache = async () => {
+    await clearCache();
+  };
+  useFocusEffect(
+    React.useCallback(() => {
       loadCards();
     }, [])
   );
+  useEffect(() => {
+  const unsubscribe = navigation.addListener("focus", () => {
+    loadCards();
+  });
+  return unsubscribe;
+}, [navigation]);
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setFilteredCards(cards);
@@ -114,7 +124,7 @@ export default function Index() {
         <TouchableOpacity
           style={{ marginRight: 20, }}
           onPress={() => {
-            //  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            // handleClearCache()
             Vibration.vibrate(60);
             setModalVisible(true)
             // You'll open modal here later
@@ -197,6 +207,7 @@ export default function Index() {
                <TouchableOpacity
   style={styles.bigButton}
   onPress={ () => {
+    setCards([]);
     setModalVisible(false);               
                     router.push({ pathname: "/FromGallery" });
                     console.log("Take Photo from galary ");
@@ -431,6 +442,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     paddingVertical: 0,
+    color:'rgb(0,0,0)'
 
   },
   card: {
