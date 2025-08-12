@@ -54,7 +54,7 @@ export default function ManualInput() {
 
     const cardData = {
       id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-      type: "manual",
+      type: "Manual",
       fields: filteredFields,
       timestamp: Date.now(),
       title: showCustomInput ? customTitle : title,

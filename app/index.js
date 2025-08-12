@@ -18,7 +18,6 @@ import {
   Vibration,
   View
 } from "react-native";
-import { pickImage } from './GalleryInput';
 const { height, width } = Dimensions.get("window");
 const CARD_HEIGHT = 230;
 const SPACING = 20;
@@ -138,7 +137,8 @@ export default function Index() {
       resizeMode="cover"
     >
       <LinearGradient
-        colors={["rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)"]}
+      colors={["rgba(179, 154, 52, 0.24)","rgba(255, 255, 255, 1)","rgba(255, 255, 255, 1)","rgba(255, 255, 255, 1)",]}
+        // colors={["rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)"]}
         // colors={["rgba(255, 208, 147, 0.56)", "rgba(133, 216, 255, 0.48)", "rgba(255, 174, 239, 0.52)",]}
         style={styles.container}
       >
@@ -194,33 +194,14 @@ export default function Index() {
                 </TouchableOpacity>
 
 
-                <TouchableOpacity
-                  style={styles.bigButton}
-                  onPress={async () => {
-                    setModalVisible(false);
-                    setIsGalleryOpening(true);
-                    await pickImage(async (uri) => {
-
-                      const newDoc = {
-                        id: Date.now().toString(),
-                        frontImage: uri,
-                        backImage: null,
-                      };
-
-                      try {
-                        const existing = await AsyncStorage.getItem("documents");
-                        const parsed = existing ? JSON.parse(existing) : [];
-                        const updated = [...parsed, newDoc];
-
-                        await AsyncStorage.setItem("documents", JSON.stringify(updated));
-                        setCards(updated); // update state to show instantly
-                      } catch (e) {
-                        console.error("Failed to save document from gallery:", e);
-                      }
-                    });
-                    setIsGalleryOpening(false);
-                  }}
-                >
+               <TouchableOpacity
+  style={styles.bigButton}
+  onPress={ () => {
+    setModalVisible(false);               
+                    router.push({ pathname: "/FromGallery" });
+                    console.log("Take Photo from galary ");
+  }}
+>
                   <View style={styles.bigButtonContent}>
                     <MaterialIcons name="add-photo-alternate" size={24} color="black" style={{ marginRight: 10 }} />
                     <Text style={styles.bigButtonText}>Choose Photo</Text>

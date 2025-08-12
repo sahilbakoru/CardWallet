@@ -68,7 +68,12 @@ export default function RootLayout() {
           href: null,
         }}
       />
-      
+       <Tabs.Screen
+        name="FromGallery"
+        options={{
+          href: null,
+        }}
+      />
    
 
     </Tabs>)

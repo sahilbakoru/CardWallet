@@ -8,15 +8,17 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    ImageBackground,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import FlipCard from "./components/FlipCard";
 
@@ -24,8 +26,8 @@ const PRESET_TITLES = [
   "License", "Payment Card","Invoice", "Gift Card", "Identity Card", "Passport", "Password", "Other",
 ];
 
-export default function ScanDocInput() {
-  const [frontImage, setFrontImage] = useState('');
+export default function FromGallery() {
+   const [frontImage, setFrontImage] = useState('');
   const [backImage, setBackImage] = useState('');
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState([{ key: "", value: "" }]);
@@ -34,10 +36,10 @@ export default function ScanDocInput() {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const router = useRouter();
   const params = useLocalSearchParams();
-
-const pickImage = async (setter) => {
+const pickImageFromGallery = async (setter) => {
   setLoading(true);
-  const result = await ImagePicker.launchCameraAsync({
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ['images'],
     quality: 1,
     allowsEditing: true,
   });
@@ -54,7 +56,7 @@ const pickImage = async (setter) => {
         to: newPath,
       });
 
-      setter(newPath); // this is the persistent URI
+      setter(newPath); // persistent URI
     } catch (err) {
       console.error("Error saving image to app storage:", err);
     }
@@ -64,7 +66,7 @@ const pickImage = async (setter) => {
 useFocusEffect(
   useCallback(() => {
     if (!frontImage) {
-      pickImage(setFrontImage);
+      pickImageFromGallery(setFrontImage);
     }
   }, [frontImage])
 );
@@ -101,7 +103,7 @@ useFocusEffect(
       backImage,
       fields: filteredFields,
       title: finalTitle,
-      type: "Scan",
+      type: "Selected",
       timestamp: Date.now(),
     };
 
@@ -117,7 +119,6 @@ useFocusEffect(
   };
 useFocusEffect(
   useCallback(() => {
-    // Reset state when screen is focused
     setFrontImage('');
     setBackImage('');
     setTitle('Document');
@@ -125,8 +126,8 @@ useFocusEffect(
     setShowCustomInput(false);
     setFields([{ key: '', value: '' }]);
 
-    // Prompt camera for front image if it's empty
-    pickImage(setFrontImage);
+    // Open gallery instead of camera
+    pickImageFromGallery(setFrontImage);
   }, [])
 );
 
@@ -146,6 +147,25 @@ useFocusEffect(
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
         >
+                {loading && (
+                      <Modal transparent animationType="fade">
+                        <View style={{
+                          flex: 1,
+                          backgroundColor: 'rgba(0,0,0,0.5)',
+                          justifyContent: 'center',
+                          alignItems: 'center'
+                        }}>
+                          <View style={{
+                            padding: 20,
+                            backgroundColor: 'white',
+                            borderRadius: 10
+                          }}>
+                            <Text style={{ marginBottom: 10 }}>Opening Gallery...</Text>
+                            <ActivityIndicator size="large" color="#000" />
+                          </View>
+                        </View>
+                      </Modal>
+                    )}
           <ScrollView showsVerticalScrollIndicator={false}  contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
              <View style={styles.formContainer} >
             <Text style={styles.title}>{title}</Text>
@@ -165,13 +185,13 @@ useFocusEffect(
                 </TouchableOpacity>
               </>
             ) : (
-              <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setFrontImage)}>
+              <TouchableOpacity style={styles.captureButton} onPress={() => pickImageFromGallery(setFrontImage)}>
                 <Text style={styles.buttonText}> ✚  Capture Front</Text>
               </TouchableOpacity>
             )}
 
             {frontImage && !backImage && (
-              <TouchableOpacity style={styles.captureButton} onPress={() => pickImage(setBackImage)}>
+              <TouchableOpacity style={styles.captureButton} onPress={() => pickImageFromGallery(setBackImage)}>
                 <Text style={styles.buttonText}>Capture Back (Optional)</Text>
               </TouchableOpacity>
             )}
