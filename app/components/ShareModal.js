@@ -1,6 +1,7 @@
+import Entypo from '@expo/vector-icons/Entypo';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Sharing from 'expo-sharing';
 import { Modal, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
 const ShareCardModal = ({ visible, onClose, card }) => {
   const shareImage = async (uri, title) => {
     if (uri && (await Sharing.isAvailableAsync())) {
@@ -30,15 +31,15 @@ const shareText = async () => {
           
 
           <TouchableOpacity onPress={() => shareImage(card.frontImage, "Share Front Image")} style={styles.option}>
-            <Text style={styles.optionText}>Share Front Image</Text>
+            <Entypo name="document" size={24} color="black" /><Text style={styles.optionText}>Share Front Image</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => shareImage(card.backImage, "Share Back Image")} style={styles.option}>
-            <Text style={styles.optionText}>Share Back Image</Text>
+            <Entypo name="documents" size={24} color="black" /><Text style={styles.optionText}>Share Back Image</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={shareText} style={styles.option}>
-            <Text style={styles.optionText}>Share Text</Text>
+            <FontAwesome name="text-height" size={24} color="black" /><Text style={styles.optionText}>Share Text</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
@@ -67,6 +68,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
+    alignItems:'center'
   },
   handle: {
     width: 40,
@@ -84,14 +86,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   option: {
+    flexDirection:'row',
     paddingVertical: 15,
     borderBottomWidth: 0.5,
     borderBottomColor: '#e0e0e0',
+    justifyContent:"flex-start",
+    width:'100%'
   },
   optionText: {
     fontSize: 18,
     color: '#000', // Black text
     textAlign: 'center',
+    marginLeft:25
   },
   closeButton: {
     marginTop: 20,
@@ -99,6 +105,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, // Black border for black-and-white look
     borderColor: '#000',
     paddingVertical: 12,
+    paddingHorizontal:'40%',
     borderRadius: 12,
     alignItems: 'center',
   },

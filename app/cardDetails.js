@@ -1,4 +1,7 @@
 import { Feather, FontAwesome6, Ionicons } from '@expo/vector-icons';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Fontisto from '@expo/vector-icons/Fontisto';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Clipboard from 'expo-clipboard';
@@ -71,15 +74,16 @@ useFocusEffect(
        headerTitleAlign: "center",
     headerLeft: () => (
            <View style={{ marginLeft: 10, 
-           // borderColor: 'black', 
-           // borderWidth: 0, 
-           padding: 0, borderRadius: 1, width: '40%' }}>
+          //  borderColor: 'black', 
+          //  borderWidth: 1, 
+           padding: 0, borderRadius: 1, width: '100%' }}>
              <Text style={{ fontSize: 17, fontWeight: '700', color: 'rgb(6, 63, 12)' }}>True Wallet</Text>
              {/* <Image style={{width:40, height:40}} source={require('../assets/images/icon.png')} /> */}
            </View>// invisible spacer to balance right icon
          ),  
          headerTitle: () => (
                  <View >
+
                  </View>
                ),
       
@@ -286,8 +290,8 @@ return (
         {/* Card info section */}
   <View style={styles.detailsContainer}>
   <View style={styles.cardHeader}>
-    <Text style={styles.cardTitle}>{card.title || "Untitled"}</Text>
-    <View style={styles.statusIndicator} />
+    <MaterialIcons name="wallet" size={35} color="black" /><Text style={styles.cardTitle}>{card.title || "Untitled"}</Text>
+    {/* <View style={styles.statusIndicator} /> */}
   </View>
   <View style={styles.cardBody}>
     {/* Type Row */}
@@ -318,7 +322,7 @@ return (
     <View style={styles.detailRow}>
       <Text style={styles.detailLabel}>Date Added</Text>
       <Text style={styles.detailValue}>
-        {card.timestamp ? new Date(card.timestamp).toLocaleDateString() : "N/A"}
+        {card.timestamp ? new Date(card.timestamp).toLocaleDateString() : "N/A"} <Fontisto name="date" size={15} color="black" />
       </Text>
     </View>
   </View>
@@ -326,7 +330,7 @@ return (
         style={styles.actionButton} 
         onPress={() => setViewerVisible(true)}
         disabled={images.length === 0}
-      >
+      ><Ionicons name="image-outline" size={25} color="black" />
         <Text style={styles.actionText}>
           View Images ({images.length})
         </Text>
@@ -349,12 +353,12 @@ return (
         <Text style={styles.text}>Card ID: {id}</Text>
 
         <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-          <Text style={styles.deleteText}>Delete Card</Text>
+  <AntDesign name="delete" size={22} color="red" /><Text style={styles.deleteText}>Delete Card</Text>
         </TouchableOpacity>
  <ShareModal
   visible={modalVisible}
   onClose={() => setModalVisible(false)}
-  card={card} // 👈 full object
+  card={card} 
 />
       </View>
      
@@ -442,12 +446,13 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
     marginBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#00000022",
     paddingBottom: 10,
+gap:"5%"
   },
   cardTitle: {
     fontSize: 22,
@@ -473,13 +478,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "#00000015",
   },
   detailLabel: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "500",
     color: "#000000dd",
     textTransform: "capitalize",
+
   },
   detailValue: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "400",
     color: "#000000ff",
     textAlign: "right",
@@ -521,12 +527,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
     backgroundColor: "#00000010",
+   
   },
   actionText: {
     color: "#000000ff",
     fontSize: 16,
     fontWeight: "600",
     marginRight: 8,
+     marginLeft:8
   },
   text: {
     fontSize: 13,
@@ -540,12 +548,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     borderRadius: 12,
     marginTop: 10,
+     flexDirection: "row",
   },
   deleteText: {
     color: "#ff4d4d",
     fontWeight: "600",
     fontSize: 16,
     textAlign: "center",
+    marginLeft:8
   },
 });
 
