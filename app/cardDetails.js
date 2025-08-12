@@ -4,8 +4,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import * as Clipboard from 'expo-clipboard';
 import * as FileSystem from "expo-file-system";
 import { LinearGradient } from 'expo-linear-gradient';
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
@@ -20,11 +20,13 @@ import {
   View
 } from "react-native";
 import ImageView from "react-native-image-viewing";
+import ShareModal from './components/ShareModal';
 
 const { width } = Dimensions.get("window");
 // ...imports stay unchanged
 
 export default function CardDetails() {
+  const navigation = useNavigation();
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [card, setCard] = useState(null);
@@ -32,30 +34,14 @@ export default function CardDetails() {
   const [currentImage, setCurrentImage] = useState('');
   const [visible, setIsVisible] = useState(false);
   const [copiedItem, setCopiedItem] = useState(null);
-
+const [modalVisible, setModalVisible] = useState(false);
   const backgroundImage = require("../assets/Backround/CardBackround.png");
   // Prepare images array
   const images = [];
   if (card?.frontImage) images.push({ uri: card.frontImage });
   if (card?.backImage) images.push({ uri: card.backImage });
 
-// useFocusEffect(
-//   useCallback(() => {
-//     const fetchCard = async () => {
-//       try {
-//         const stored = await AsyncStorage.getItem("documents");
-//         const parsed = stored ? JSON.parse(stored) : [];
-//         const found = parsed.find((doc) => doc.id === id);
-//         console.log(found, 'card details');
-//         setCard(found);
-//       } catch (e) {
-//         console.error("Failed to load card:", e);
-//       }
-//     };
 
-//     fetchCard();
-//   }, [id])
-// );
 
 useFocusEffect(
   useCallback(() => {
@@ -79,6 +65,34 @@ useFocusEffect(
     };
     fetchCard();
   }, [id]);
+     useLayoutEffect(() => {
+     navigation.setOptions({
+      
+       headerTitleAlign: "center",
+    headerLeft: () => (
+           <View style={{ marginLeft: 10, 
+           // borderColor: 'black', 
+           // borderWidth: 0, 
+           padding: 0, borderRadius: 1, width: '40%' }}>
+             <Text style={{ fontSize: 17, fontWeight: '700', color: 'rgb(6, 63, 12)' }}>True Wallet</Text>
+             {/* <Image style={{width:40, height:40}} source={require('../assets/images/icon.png')} /> */}
+           </View>// invisible spacer to balance right icon
+         ),  
+         headerTitle: () => (
+                 <View >
+                 </View>
+               ),
+      
+       headerRight: () => (
+         <TouchableOpacity
+           style={{ marginRight: 20, }}
+          onPress={() => setModalVisible(true)}
+         >
+           <Ionicons name="share-outline" size={30} color="black" />
+         </TouchableOpacity>
+       ),
+     });
+   }, [navigation]);
 const flipAnim = useRef(new Animated.Value(0)).current;
 const [isFront, setIsFront] = useState(true);
 const frontInterpolate = flipAnim.interpolate({
@@ -164,8 +178,9 @@ const handleDelete = async () => {
 
   if (!card) return <Text style={{ color: "white", padding: 20 }}>Loading...</Text>;
 
+
 // Prepare images array
- 
+
 return (
   // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
   //   <StatusBar style="dark" />
@@ -336,6 +351,11 @@ return (
         <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
           <Text style={styles.deleteText}>Delete Card</Text>
         </TouchableOpacity>
+ <ShareModal
+  visible={modalVisible}
+  onClose={() => setModalVisible(false)}
+  card={card} // 👈 full object
+/>
       </View>
      
     </LinearGradient>

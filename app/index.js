@@ -221,10 +221,10 @@ export default function Index() {
                   </View>
                 </TouchableOpacity>
 
-
-                <TouchableOpacity onPress={() => setModalVisible(false)}>
-                  <Text style={styles.cancelText}>Cancel</Text>
-                </TouchableOpacity>
+     <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Cancel</Text>
+          </TouchableOpacity>
+            
               </View>
             </View>
           </Modal>
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0)", // transparent upper area
+    backgroundColor: "rgba(0, 0, 0, 0.36)", // transparent upper area
   },
 
   modalBackdrop: {
@@ -532,18 +532,25 @@ const styles = StyleSheet.create({
   },
 
   bigButtonText: {
-    color: "#617880",
+    color: "#000000ff",
     fontSize: 20,
     fontWeight: "600",
   },
 
 
-  cancelText: {
-    marginTop: 35,
-    color: "red",
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: '#000', // Black background
+    borderWidth: 1, // Black border for black-and-white look
+    borderColor: '#000',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  closeButtonText: {
     fontSize: 18,
-    fontWeight: "500",
-    textAlign: "center",
+    fontWeight: '600',
+    color: '#fff', // White  text
   },
 
 
