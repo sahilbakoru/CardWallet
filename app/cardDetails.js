@@ -1,4 +1,4 @@
-import { Feather, FontAwesome6, Ionicons } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -23,6 +23,7 @@ import {
   View
 } from "react-native";
 import ImageView from "react-native-image-viewing";
+import EditCardModal from './components/EditCardModal';
 import ShareModal from './components/ShareModal';
 
 const { width } = Dimensions.get("window");
@@ -38,6 +39,7 @@ export default function CardDetails() {
   const [visible, setIsVisible] = useState(false);
   const [copiedItem, setCopiedItem] = useState(null);
 const [modalVisible, setModalVisible] = useState(false);
+const [editModalVisible, setEditModalVisible] = useState(false);
   const backgroundImage = require("../assets/Backround/CardBackround.png");
   // Prepare images array
   const images = [];
@@ -68,6 +70,41 @@ useFocusEffect(
     };
     fetchCard();
   }, [id]);
+   useFocusEffect(
+    useCallback(() => {
+      // Reset states
+      setCard(null);
+      setIsFront(true);
+      flipAnim.setValue(0);
+      setViewerVisible(false);
+      setCurrentImage('');
+      setCopiedItem(null);
+      setModalVisible(false);
+      setEditModalVisible(false);
+
+      const fetchCard = async () => {
+        try {
+          const stored = await AsyncStorage.getItem('documents');
+          const parsed = stored ? JSON.parse(stored) : [];
+          const found = parsed.find((doc) => doc.id === id);
+          if (found) {
+            setCard(found);
+          } else {
+            Alert.alert('Error', 'Card not found');
+            router.back();
+          }
+        } catch (e) {
+          console.error('Failed to load card:', e);
+          Alert.alert('Error', 'Failed to load card');
+        }
+      };
+      fetchCard();
+      // Cleanup function to reset states when screen loses focus
+      return () => {
+        setCard(null);
+      };
+    }, [id])
+  );
      useLayoutEffect(() => {
      navigation.setOptions({
       
@@ -88,12 +125,20 @@ useFocusEffect(
                ),
       
        headerRight: () => (
+        <View style={{ flexDirection: 'row', marginRight: 20, gap: 15 }}>
+        <TouchableOpacity 
+        style={{ marginRight: 10, }}
+        onPress={() => setEditModalVisible(true)}
+        >
+          <Feather name="edit-3" size={30} color="black" />
+        </TouchableOpacity>
          <TouchableOpacity
-           style={{ marginRight: 20, }}
+           style={{ marginRight: 10, }}
           onPress={() => setModalVisible(true)}
          >
            <Ionicons name="share-outline" size={30} color="black" />
          </TouchableOpacity>
+         </View>
        ),
      });
    }, [navigation]);
@@ -183,8 +228,22 @@ const handleDelete = async () => {
   if (!card) return <Text style={{ color: "white", padding: 20 }}>Loading...</Text>;
 
 
-// Prepare images array
-
+//
+const handleSaveCard = async (updatedCard) => {
+  try {
+    const stored = await AsyncStorage.getItem('documents');
+    const parsed = stored ? JSON.parse(stored) : [];
+    const updatedDocs = parsed.map((doc) =>
+      doc.id === id ? { ...updatedCard, id, timestamp: doc.timestamp, frontImage: doc.frontImage, backImage: doc.backImage } : doc
+    );
+    await AsyncStorage.setItem('documents', JSON.stringify(updatedDocs));
+    setCard(updatedCard); // Update local state to reflect changes
+    setEditModalVisible(false);
+  } catch (e) {
+    console.error('Failed to update card:', e);
+    Alert.alert('Error', 'Failed to save changes');
+  }
+};
 return (
   // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
   //   <StatusBar style="dark" />
@@ -279,7 +338,7 @@ return (
         {card.backImage && (
           <TouchableOpacity style={styles.flipButton} onPress={triggerFlip}>
             <View style={styles.flipButtonContent}>
-              <FontAwesome6 name="arrows-rotate" size={18} color="rgb(0,0,0)" />
+              <Fontisto name="spinner-refresh" size={22} color="black" />
               <Text style={styles.flipButtonText}>
                 {"Flip "}
               </Text>
@@ -364,7 +423,12 @@ return (
      
     </LinearGradient>
      </ScrollView>
-   
+   <EditCardModal
+  visible={editModalVisible}
+  onClose={() => setEditModalVisible(false)}
+  card={card}
+  onSave={handleSaveCard}
+/>
   </ImageBackground>
   // </SafeAreaView>
 );

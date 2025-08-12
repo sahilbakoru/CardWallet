@@ -1,4 +1,4 @@
-import { FontAwesome6 } from "@expo/vector-icons";
+import Fontisto from '@expo/vector-icons/Fontisto';
 import { useRef, useState } from "react";
 import {
   Animated,
@@ -79,7 +79,7 @@ export default function FlipCard({ frontImage, backImage }) {
       {backImage && (
         <TouchableOpacity style={styles.flipButton} onPress={triggerFlip}>
           <View style={styles.flipButtonContent}>
-            <FontAwesome6 name="arrows-rotate" size={16} color="#000000e4" />
+            <Fontisto name="spinner-refresh" size={20} color="black" />
             <Text style={styles.flipButtonText}>Flip</Text>
           </View>
         </TouchableOpacity>
