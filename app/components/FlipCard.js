@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   flipButton: {
     marginTop: 10,
-    backgroundColor: "#f1f2f617",
+    backgroundColor: "#00000017",
     paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: 24,
