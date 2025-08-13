@@ -5,20 +5,20 @@ import { useFocusEffect } from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    ImageBackground,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import FlipCard from "./components/FlipCard";
 
@@ -27,6 +27,7 @@ const PRESET_TITLES = [
 ];
 
 export default function FromGallery() {
+   const navigation = useNavigation();
    const [frontImage, setFrontImage] = useState('');
   const [backImage, setBackImage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -131,6 +132,32 @@ useFocusEffect(
   }, [])
 );
 
+   useLayoutEffect(() => {
+     navigation.setOptions({
+      
+       headerTitleAlign: "center",
+    headerLeft: () => (
+           <View style={{ marginLeft: 10, 
+          //  borderColor: 'black', 
+          //  borderWidth: 1, 
+           padding: 0, borderRadius: 1, width: '100%' }}>
+             <Text style={{ fontSize: 17, fontWeight: '700', color: 'rgb(6, 63, 12)' }}>True Wallet</Text>
+             {/* <Image style={{width:40, height:40}} source={require('../assets/images/icon.png')} /> */}
+           </View>// invisible spacer to balance right icon
+         ),  
+         headerTitle: () => (
+                 <View >
+
+                 </View>
+               ),
+      
+       headerRight: () => (
+        <View >
+        
+         </View>
+       ),
+     });
+   }, [navigation]);
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor:'grey' }}>
     //   <StatusBar style="dark" />
@@ -140,7 +167,8 @@ useFocusEffect(
           resizeMode="cover"
         >
           <LinearGradient
-            colors={["rgba(255, 255, 255, 0.99)", "rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)",]}
+                  colors={["rgba(179, 154, 52, 0.24)","rgba(255, 255, 255, 1)","rgba(255, 255, 255, 1)","rgba(255, 255, 255, 1)",]}
+
             style={styles.gradientOverlay}
           >
         <KeyboardAvoidingView
@@ -224,7 +252,7 @@ useFocusEffect(
                     }
                   }}
                 >
-                  <Text style={{ color: title === item || (item === "Other" && showCustomInput) ? "#000" : "#000" ,   fontWeight: "300", }}>
+                  <Text style={{ color: title === item || (item === "Other" && showCustomInput) ? "#fff" : "#000" ,   fontWeight: "300", }}>
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -279,8 +307,7 @@ useFocusEffect(
               <Text style={styles.saveText}>Save Card</Text>
             </TouchableOpacity> */}
             </View>
-          </ScrollView>
-          <View
+             <View
               style={{
                 backgroundColor: "rgba(0,0,0,0.05)",
                 borderRadius: 10,
@@ -311,6 +338,8 @@ useFocusEffect(
             >
               <Text style={styles.saveText}>Save Card</Text>
             </TouchableOpacity>
+          </ScrollView>
+         
         </KeyboardAvoidingView>
         </LinearGradient>
       </ImageBackground>
@@ -319,17 +348,17 @@ useFocusEffect(
   );
 }
 const styles = StyleSheet.create({
+      backgroundImage: {
+    flex: 1,
+ 
+  },
+   gradientOverlay: {
+    flex: 1,
+    // justifyContent: "flex-start",
+  },
   container: {
     padding: 1,
     paddingBottom: 60,
-  },
-  backgroundImage: {
-    flex: 1,
-  },
-  gradientOverlay: {
-    flex: 1,
-    padding: 1,
-    justifyContent: "flex-start",
   },
   title: {
     fontSize: 22,
@@ -340,15 +369,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   formContainer: {
-    backgroundColor: "rgba(0, 0, 0, 0.03)",
-    padding: 5,
+    // backgroundColor: 'rgba(255, 255, 255, 0.07)',
+    padding: 1,
     borderRadius: 10,
-    marginVertical: 5,
-    marginHorizontal:5,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    marginVertical: 0,
+    marginHorizontal: 0,
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 10,
+    // elevation: 5,
   },
   captureButton: {
     backgroundColor: "#ffffff0a",
@@ -386,7 +416,7 @@ const styles = StyleSheet.create({
     borderColor: "#00000026",
   },
   chipSelected: {
-    backgroundColor: "#00000020",
+    backgroundColor: "#000000ff",
     borderColor: "#00000090",
   },
   input: {

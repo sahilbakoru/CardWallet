@@ -57,7 +57,7 @@ export default function RootLayout() {
         }}
       />
        <Tabs.Screen
-        name="ManualInput"
+        name="tabs/ManualInput"
         options={{
           href: null,
         }}

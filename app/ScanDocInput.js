@@ -5,8 +5,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
   ImageBackground,
   KeyboardAvoidingView,
@@ -25,6 +25,7 @@ const PRESET_TITLES = [
 ];
 
 export default function ScanDocInput() {
+      const navigation = useNavigation();
   const [frontImage, setFrontImage] = useState('');
   const [backImage, setBackImage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -130,6 +131,34 @@ useFocusEffect(
   }, [])
 );
 
+
+//  header 
+    useLayoutEffect(() => {
+     navigation.setOptions({
+      
+       headerTitleAlign: "center",
+    headerLeft: () => (
+           <View style={{ marginLeft: 10, 
+          //  borderColor: 'black', 
+          //  borderWidth: 1, 
+           padding: 0, borderRadius: 1, width: '100%' }}>
+             <Text style={{ fontSize: 17, fontWeight: '700', color: 'rgb(6, 63, 12)' }}>True Wallet</Text>
+             {/* <Image style={{width:40, height:40}} source={require('../assets/images/icon.png')} /> */}
+           </View>// invisible spacer to balance right icon
+         ),  
+         headerTitle: () => (
+                 <View >
+
+                 </View>
+               ),
+      
+       headerRight: () => (
+        <View >
+        
+         </View>
+       ),
+     });
+   }, [navigation]);
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor:'grey' }}>
     //   <StatusBar style="dark" />
@@ -139,7 +168,7 @@ useFocusEffect(
           resizeMode="cover"
         >
           <LinearGradient
-            colors={["rgba(255, 255, 255, 0.99)", "rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)",]}
+        colors={["rgba(179, 154, 52, 0.24)","rgba(255, 255, 255, 1)","rgba(255, 255, 255, 1)","rgba(255, 255, 255, 1)",]}
             style={styles.gradientOverlay}
           >
         <KeyboardAvoidingView
@@ -204,7 +233,7 @@ useFocusEffect(
                     }
                   }}
                 >
-                  <Text style={{ color: title === item || (item === "Other" && showCustomInput) ? "#000" : "#000" ,   fontWeight: "300", }}>
+                  <Text style={{ color: title === item || (item === "Other" && showCustomInput) ? "#fff" : "#000" ,   fontWeight: "300", }}>
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -259,29 +288,13 @@ useFocusEffect(
               <Text style={styles.saveText}>Save Card</Text>
             </TouchableOpacity> */}
             </View>
-          </ScrollView>
-          <View
-              style={{
-                backgroundColor: "rgba(0,0,0,0.05)",
-                borderRadius: 10,
-                marginHorizontal: 16,
-                paddingVertical: 8,
-                paddingHorizontal: 12,
-                marginTop: 10,
-                marginBottom: 5,
-              }}
-            >
-              <Text
-                style={{
-                  textAlign: "center",
-                  color: "rgba(0,0,0,0.7)",
-                  fontSize: 13,
-                  fontWeight: "500",
-                }}
-              >
-                🔒 Because of privacy, all cards and files are stored only on your device.
-              </Text></View>
-      <TouchableOpacity
+               <View style={styles.footerContainer}>
+                      <View style={styles.privacyNotice}>
+                        <Text style={styles.privacyText}>
+                          🔒 Because of privacy, all cards and files are stored only on your device.
+                        </Text>
+                      </View>
+                       <TouchableOpacity
               style={[
                 styles.saveButton,
                 !frontImage ? styles.disabled : {},
@@ -289,8 +302,13 @@ useFocusEffect(
               onPress={saveCard}
               disabled={!frontImage ? true : false}
             >
-              <Text style={styles.saveText}>Save Card</Text>
-            </TouchableOpacity>
+                        <Text style={styles.saveText}>Save Card</Text>
+                      </TouchableOpacity>
+                    </View>
+            
+ 
+          </ScrollView>
+         
         </KeyboardAvoidingView>
         </LinearGradient>
       </ImageBackground>
@@ -319,16 +337,17 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     textAlign: "center",
   },
-  formContainer: {
-    backgroundColor: "rgba(0, 0, 0, 0.03)",
-    padding: 5,
+    formContainer: {
+    // backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    padding: 1,
     borderRadius: 10,
-    marginVertical: 5,
-    marginHorizontal:5,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    marginVertical: 0,
+    marginHorizontal: 0,
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 10,
+    // elevation: 5,
   },
   captureButton: {
     backgroundColor: "#ffffff0a",
@@ -359,63 +378,85 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "#00000009",
+    backgroundColor: '#f5f5f5',
     borderRadius: 18,
     marginRight: 10,
     borderWidth: 1,
-    borderColor: "#00000026",
+    borderColor: '#e0e0e0',
   },
   chipSelected: {
-    backgroundColor: "#00000020",
-    borderColor: "#00000090",
+    backgroundColor: '#000',
+    borderColor: '#000',
+  },
+  fieldRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginHorizontal: 10,
+    gap: 10,
   },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#00000026",
-    padding: 12,
+    borderColor: '#e0e0e0',
+    padding: 10,
     borderRadius: 10,
-    marginRight: 6,
-    fontSize: 15,
+    fontSize: 16,
+    backgroundColor: '#f5f5f5',
+    color: '#000',
     marginVertical: 5,
-    backgroundColor: "#0000000b",
-    color: "#000000ff",
-    fontWeight: "400",
-  },
-  fieldRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    marginHorizontal: 10,
   },
   addBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 12,
-    marginBottom: 24,
-    marginTop: 8,
+    flexDirection: 'row',
+    paddingVertical: 15,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#e0e0e0',
+    justifyContent: 'flex-start',
+    width: '100%',
+    alignItems: 'center',
+    marginLeft: 10,
   },
   addBtnText: {
-    color: "#000000ff",
-    fontSize: 16,
-    marginLeft: 6,
+    fontSize: 18,
+    color: '#000',
+    marginLeft: 25,
+  },
+  footerContainer: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingBottom: 15,
+  },
+  privacyNotice: {
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  privacyText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: 'rgba(0, 0, 0, 0.7)',
+    textAlign: 'center',
   },
   saveButton: {
-    backgroundColor: "#2C3E50",
-    paddingVertical: 16,
-    borderRadius: 14,
-    alignItems: "center",
-    marginHorizontal: 16,
-marginVertical:15,
-    shadowColor: "#000",
+    backgroundColor: '#000',
+    borderWidth: 1,
+    borderColor: '#000',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
   },
   saveText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#fff',
   },
   disabled: {
     opacity: 0.5,
