@@ -1,8 +1,7 @@
-import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Switch,
@@ -34,15 +33,15 @@ export default function SettingsScreen() {
     //   features: ['All premium features', 'Unlimited storage', 'Priority support', 'Advanced analytics'],
     //   color: '#007AFF'
     // },
-    {
-      id: 'premium',
-      name: 'Premium Plan',
-      price: '$0.',
-      subPrice:'99',
-      subMonth:'/month',
-      features: ['All Free features', 'Unlimited cards', 'Custom backgrounds', 'Early access to new features','Basic Support','Dark Mode'],
-      color: '#5856d6'
-    }
+    // {
+    //   id: 'premium',
+    //   name: 'Premium Plan',
+    //   price: '$0.',
+    //   subPrice:'99',
+    //   subMonth:'/month',
+    //   features: ['All Free features', 'Unlimited cards', 'Custom backgrounds', 'Early access to new features','Basic Support','Dark Mode'],
+    //   color: '#5856d6'
+    // }
   ];
 
   return (
@@ -54,17 +53,17 @@ export default function SettingsScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={[styles.headerText, isDarkMode && styles.darkText]}>Settings</Text>
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <Ionicons 
               name="notifications-outline" 
               size={24} 
               color={isDarkMode ? "#fff" : "#000"} 
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* User Profile Card */}
-        <View style={[styles.profileCard, isDarkMode && styles.darkCard]}>
+        {/* <View style={[styles.profileCard, isDarkMode && styles.darkCard]}>
           <Image
             source={require('../assets/images/react-logo.png')}
             style={styles.avatar}
@@ -76,7 +75,7 @@ export default function SettingsScreen() {
           <TouchableOpacity style={styles.editButton}>
             <Feather name="edit-2" size={16} color={isDarkMode ? "#fff" : "#007AFF"} />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* Subscription Section */}
         <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Your Plan</Text>
@@ -151,7 +150,7 @@ export default function SettingsScreen() {
               />
             }
           />
-          <SettingItem
+          {/* <SettingItem
             icon="finger-print"
             name="Biometric Login"
             isDarkMode={isDarkMode}
@@ -175,11 +174,11 @@ export default function SettingsScreen() {
                 color={isDarkMode ? "#aaa" : "#888"} 
               />
             }
-          />
+          /> */}
         </View>
 
         {/* Account Settings */}
-        <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Account</Text>
+        {/* <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Account</Text>
         <View style={[styles.settingsCard, isDarkMode && styles.darkCard]}>
           <SettingItem
             icon="person-outline"
@@ -199,10 +198,10 @@ export default function SettingsScreen() {
             isDarkMode={isDarkMode}
             hasChevron
           />
-        </View>
+        </View> */}
 
         {/* Support Section */}
-        <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Support</Text>
+        {/* <Text style={[styles.sectionTitle, isDarkMode && styles.darkText]}>Support</Text>
         <View style={[styles.settingsCard, isDarkMode && styles.darkCard]}>
           <SettingItem
             icon="help-circle-outline"
@@ -222,13 +221,13 @@ export default function SettingsScreen() {
             isDarkMode={isDarkMode}
             hasChevron
           />
-        </View>
+        </View> */}
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton}>
+        {/* <TouchableOpacity style={styles.logoutButton}>
           <MaterialIcons name="logout" size={20} color="#ff3b30" />
           <Text style={styles.logoutText}>Log Out</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={styles.versionContainer}>
           <Text style={[styles.versionText, isDarkMode && styles.darkSubtext]}>
