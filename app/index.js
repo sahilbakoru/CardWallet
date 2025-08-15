@@ -201,7 +201,7 @@ const truncateText = (text, maxLength) => {
                   }}
                 >
                   <View style={styles.bigButtonContent}>
-                    <MaterialIcons name="document-scanner" size={24} color="black" style={{ marginRight: 10 }} />
+                    <Feather name="camera" size={24} color="black" style={{ marginRight: 10 }}/>
                     <Text style={styles.bigButtonText}>Scan Document</Text>
                   </View>
                 </TouchableOpacity>
@@ -210,14 +210,16 @@ const truncateText = (text, maxLength) => {
                <TouchableOpacity
   style={styles.bigButton}
   onPress={ () => {
+    setIsGalleryOpening(true)
     setCards([]);
     setModalVisible(false);               
                     router.push({ pathname: "/FromGallery" });
                     console.log("Take Photo from galary ");
+                       setIsGalleryOpening(false)
   }}
 >
                   <View style={styles.bigButtonContent}>
-                    <MaterialIcons name="add-photo-alternate" size={24} color="black" style={{ marginRight: 10 }} />
+                    <MaterialIcons name="photo-camera-back" size={24} color="black" style={{ marginRight: 10 }}  />
                     <Text style={styles.bigButtonText}>Choose Photo</Text>
                   </View>
                 </TouchableOpacity>

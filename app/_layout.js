@@ -1,11 +1,17 @@
-import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from '@expo/vector-icons/Octicons';
 import { Tabs } from "expo-router";
+import { Pressable } from 'react-native';
 export default function RootLayout() {
   return (
 
-    <Tabs screenOptions={{ tabBarActiveTintColor: 'black',
+    <Tabs screenOptions={{ tabBarActiveTintColor: 'black',   tabBarButton: (props) => (
+          <Pressable
+            {...props}
+            android_ripple={{ color: "rgba(132, 132, 132, 1)" }} // Set ripple color to transparent
+          />
+        ),
       // headerTransparent: true, 
   // headerStyle: {
   //      backgroundColor: 'rgba(0, 0, 0, 0.44)', // Overrides the global headerStyle for this screen
@@ -24,7 +30,7 @@ export default function RootLayout() {
         name="ScanDocInput"
         options={{
           title: 'scan',
-          tabBarIcon: ({ color }) => <AntDesign name="scan1" size={28} color={color} />,
+          tabBarIcon: ({ color }) => <Feather name="camera" size={28} color={color} />,
         }}
       />
       <Tabs.Screen

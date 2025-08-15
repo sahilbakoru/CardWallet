@@ -3,7 +3,7 @@ import LottieView from 'lottie-react-native';
 import { useEffect, useRef } from 'react';
 import { Modal, StyleSheet, View } from 'react-native';
 
-const ActionModal = ({ visible, onClose, actionType = 'save', size = 120, time=1500 }) => {
+const ActionModal = ({ visible, onClose, actionType = 'save', size = 100, time=1500 }) => {
   const animationRef = useRef(null);
 
   // Programmatic Lottie file selection

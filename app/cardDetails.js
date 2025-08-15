@@ -203,9 +203,9 @@ const handleLike = async () => {
 };
 const handleDelete = async () => {
   Alert.alert("Delete", "Are you sure you want to delete this card?", [
-    { text: "Cancel", style: "cancel" },
+    { text: "No ", style: "cancel" },
     {
-      text: "Delete",
+      text: "Yes",
       style: "destructive",
       onPress: async () => {
         try {
@@ -397,7 +397,7 @@ return (
     <ActionModal        
          visible={likeModalVisible}
         onClose={() => setLikeModalVisible(false)}
-        actionType={"like"} size={100} time={1500}  />
+        actionType={"like"} size={100} time={1000}  />
         </View>
   </View>
   <View style={styles.cardBody}>

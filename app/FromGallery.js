@@ -21,7 +21,7 @@ import {
   View
 } from "react-native";
 import FlipCard from "./components/FlipCard";
-
+import ActionModal from './components/LikeButton';
 const PRESET_TITLES = [
   "License", "Payment Card","Invoice", "Gift Card", "Identity Card", "Passport", "Password", "Other",
 ];
@@ -35,6 +35,7 @@ export default function FromGallery() {
   const [title, setTitle] = useState("Document");
   const [customTitle, setCustomTitle] = useState("");
   const [showCustomInput, setShowCustomInput] = useState(false);
+   const [saveAnimation, setSaveAnimation] =useState(false)
   const router = useRouter();
   const params = useLocalSearchParams();
 const pickImageFromGallery = async (setter) => {
@@ -113,7 +114,11 @@ useFocusEffect(
       const parsed = existing ? JSON.parse(existing) : [];
       parsed.push(newDoc);
       await AsyncStorage.setItem("documents", JSON.stringify(parsed));
-      router.replace("/");
+         setSaveAnimation(true)
+            const timer = setTimeout(() => {
+          router.replace("/");
+      }, 1500);
+      return () => clearTimeout(timer); // Cleanup timer
     } catch (e) {
       console.error("Error saving:", e);
     }
@@ -126,7 +131,7 @@ useFocusEffect(
     setCustomTitle('');
     setShowCustomInput(false);
     setFields([{ key: '', value: '' }]);
-
+setSaveAnimation(false)
     // Open gallery instead of camera
     pickImageFromGallery(setFrontImage);
   }, [])
@@ -174,7 +179,11 @@ useFocusEffect(
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
-        >
+        >  
+       <ActionModal        
+         visible={saveAnimation}
+        onClose={() => setSaveAnimation(false)}
+        actionType={"save"} size={100} time={2000} />
                 {loading && (
                       <Modal transparent animationType="fade">
                         <View style={{

@@ -19,6 +19,7 @@ import {
   View
 } from "react-native";
 import FlipCard from "./components/FlipCard";
+import ActionModal from './components/LikeButton';
 
 const PRESET_TITLES = [
   "License", "Payment Card","Invoice", "Gift Card", "Identity Card", "Passport", "Password", "Other",
@@ -33,6 +34,7 @@ export default function ScanDocInput() {
   const [title, setTitle] = useState("Document");
   const [customTitle, setCustomTitle] = useState("");
   const [showCustomInput, setShowCustomInput] = useState(false);
+    const [saveAnimation, setSaveAnimation] =useState(false)
   const router = useRouter();
   const params = useLocalSearchParams();
 
@@ -111,7 +113,12 @@ useFocusEffect(
       const parsed = existing ? JSON.parse(existing) : [];
       parsed.push(newDoc);
       await AsyncStorage.setItem("documents", JSON.stringify(parsed));
-      router.replace("/");
+         setSaveAnimation(true)
+            const timer = setTimeout(() => {
+           router.replace("/");
+      }, 1500);
+      return () => clearTimeout(timer); // Cleanup timer
+   
     } catch (e) {
       console.error("Error saving:", e);
     }
@@ -125,7 +132,7 @@ useFocusEffect(
     setCustomTitle('');
     setShowCustomInput(false);
     setFields([{ key: '', value: '' }]);
-
+setSaveAnimation(false)
     // Prompt camera for front image if it's empty
     pickImage(setFrontImage);
   }, [])
@@ -176,7 +183,11 @@ useFocusEffect(
           style={{ flex: 1 }}
         >
           <ScrollView showsVerticalScrollIndicator={false}  contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-             <View style={styles.formContainer} >
+            <ActionModal        
+         visible={saveAnimation}
+        onClose={() => setSaveAnimation(false)}
+        actionType={"save"} size={100} time={2000}  />
+         <View style={styles.formContainer} >
             <Text style={styles.title}>{title}</Text>
 
             {frontImage ? (
