@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import ActionModal from '../components/LikeButton';
 
 const { width } = Dimensions.get("window");
 const PRESET_TITLES = [
@@ -34,6 +35,7 @@ export default function ManualInput() {
   const [title, setTitle] = useState("");
   const [customTitle, setCustomTitle] = useState("");
   const [showCustomInput, setShowCustomInput] = useState(false);
+  const [saveAnimation, setSaveAnimation] =useState(false)
   const router = useRouter();
   const backgroundImage = require("../../assets/Backround/CardBackround.png");
   const addField = () => setFields([...fields, { key: "", value: "" }]);
@@ -66,8 +68,11 @@ export default function ManualInput() {
     const parsed = existing ? JSON.parse(existing) : [];
     parsed.push(cardData);
     await AsyncStorage.setItem("documents", JSON.stringify(parsed));
-
-    router.replace("/");
+   setSaveAnimation(true)
+            const timer = setTimeout(() => {
+         router.replace("/");
+      }, 1500);
+      return () => clearTimeout(timer); // Cleanup timer
   };
   useFocusEffect(
     useCallback(() => {
@@ -76,6 +81,7 @@ export default function ManualInput() {
       setCustomTitle("");
       setShowCustomInput(false);
       setFields([{ key: "", value: "" }]);
+      setSaveAnimation(false)
     }, [])
   );
 
@@ -267,6 +273,10 @@ export default function ManualInput() {
             <Text style={styles.saveBtnText}>Save Card</Text>
           </TouchableOpacity>
         </View>
+        <ActionModal        
+         visible={saveAnimation}
+        onClose={() => setSaveAnimation(false)}
+        actionType={"save"} size={100} time={2000}  />
       </ScrollView>
       </LinearGradient>
     </KeyboardAvoidingView>

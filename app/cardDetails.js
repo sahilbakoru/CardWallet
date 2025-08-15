@@ -259,7 +259,7 @@ const handleDelete = async () => {
   };
 
 
-  if (!card) return <Text style={{ color: "white", padding: 20 }}>Loading...</Text>;
+  if (!card) return <Text style={{ color: "black", padding: 20, alignItems:'center',justifyContent:'center' ,fontSize:40}}>Loading...</Text>;
 
 
 //
