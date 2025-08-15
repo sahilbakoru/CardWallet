@@ -136,7 +136,10 @@ export default function Index() {
       ),
     });
   }, [navigation, searchQuery]);
-
+const truncateText = (text, maxLength) => {
+  if (!text) return '';
+  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+};
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
 
@@ -380,7 +383,7 @@ export default function Index() {
                               textAlign: 'center'
                             }}
                           >
-                            {item?.title || "Untitled"}
+                            {truncateText(item?.title,20) || "Untitled"}
                           </Text>
 
                           {item.fields.slice(0, 2)?.map((field, index) => (
@@ -393,9 +396,9 @@ export default function Index() {
                                   marginBottom: 6,
                                 }}
                               >
-                                {field.key}:{" "}
+                                {truncateText(field.key,10)}:{" "}
                                 <Text style={{ color: "#454545ff", fontWeight: "600" }}>
-                                  {field.value}
+                                  {truncateText(field.value,10)}
                                 </Text>
                               </Text>
                             </View>

@@ -112,6 +112,10 @@ export default function ManualInput() {
        ),
      });
    }, [navigation]);
+   const truncateText = (text, maxLength) => {
+  if (!text) return '';
+  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+};
   return (
     <ImageBackground
         source={require("../../assets/Backround/backround.png")}
@@ -158,13 +162,13 @@ export default function ManualInput() {
                 }}
               >
                 <Text style={styles.cardTitle}>
-                  {showCustomInput ? customTitle : title || "Untitled"}
+                  {showCustomInput ? truncateText(customTitle,20) : truncateText(title,20) || "Untitled"}
                 </Text>
                 {fields?.slice(0, 3).map((field, index) => (
                   <View key={`field-${index}`}>
                     <Text style={styles.cardField}>
-                      {field.key}:{" "}
-                      <Text style={styles.cardFieldValue}>{field.value}</Text>
+                      {truncateText(field.key,10)} : {" "}
+                      <Text style={styles.cardFieldValue}>{truncateText(field.value,10)}</Text>
                     </Text>
                   </View>
                 ))}

@@ -278,6 +278,10 @@ const handleSaveCard = async (updatedCard) => {
     Alert.alert('Error', 'Failed to save changes');
   }
 };
+const truncateText = (text, maxLength) => {
+  if (!text) return '';
+  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+};
 return (
   // <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
   //   <StatusBar style="dark" />
@@ -352,13 +356,13 @@ return (
                             }}
                           >
         <Text style={styles.cardTitle}>
-          {card.title || "Untitled"}
+          {truncateText(card.title,20) || "Untitled"}
         </Text>
         {card.fields?.slice(0, 3).map((field, index) => (
           <View key={`field-${index}-${card.timestamp}`}>
             <Text style={styles.cardField}>
-              {field.key}:{" "}
-              <Text style={styles.cardFieldValue}>{field.value}</Text>
+              {truncateText(field.key,10)}:{" "}
+              <Text style={styles.cardFieldValue}>{truncateText(field.value,10)}</Text>
             </Text>
           </View>
         ))}
@@ -383,7 +387,7 @@ return (
         {/* Card info section */}
   <View style={styles.detailsContainer}>
   <View style={styles.cardHeader}>
-    <MaterialIcons name="wallet" size={35} color="black" /><Text style={styles.cardTitle}>{card.title || "Untitled"}</Text>
+    <MaterialIcons name="wallet" size={35} color="black" /><Text style={styles.cardTitle}>{truncateText(card.title,14) || "Untitled"}</Text>
    <View style={{marginLeft:'5%'}}>
     <TouchableOpacity onPress={handleLike}>
         <Text>
@@ -406,16 +410,16 @@ return (
     {/* Custom Fields (Dynamic) */}
     {card.fields?.map((field, index) => (
                   <View style={styles.detailRow} key={`field-${index}`}>
-                    <Text style={styles.detailLabel}>{field.key.trim()}</Text>
+                    <Text style={styles.detailLabel}>{truncateText(field.key.trim(),10)}</Text>
                     <TouchableOpacity 
                       style={styles.copyContainer}
                       onPress={() => handleCopy(field.value, field.key)}
                     >
-                      <Text style={styles.detailValue}>{field.value}</Text>
-                      {copiedItem === field.key ? (
-    <Feather name="check" size={17} color="rgba(39, 131, 0, 1)"  />
+                      <Text style={styles.detailValue}>{truncateText(field.value, 10)}</Text>
+                     {copiedItem === field.key ? (
+    <Feather name="check" size={17} color="rgba(39, 131, 0, 1)"  style={styles.copyIcon} />
   ) : (
-    <Feather name="copy" size={16} color="rgb(0,0,0)"  />
+    <Feather name="copy" size={16} color="rgb(0,0,0)" style={styles.copyIcon} />
   )}
                     </TouchableOpacity>
                   </View>
@@ -569,8 +573,15 @@ gap:"5%"
   cardTitle: {
     fontSize: 22,
     fontWeight: "600",
+    maxWidth:'65%',
     color: "#000000ff",
     textTransform: "capitalize",
+      // flex: 1, // Takes remaining space
+  overflow: "hidden", // Hides overflow
+  numberOfLines: 1, // Limits to one line
+  ellipsizeMode: "tail", // Adds ... at the end
+  //  borderWidth: 1, // Debug
+  // borderColor: "red", // Debug
   },
   statusIndicator: {
     width: 10,
@@ -581,39 +592,51 @@ gap:"5%"
   cardBody: {
     paddingVertical: 10,
   },
-  detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 12,
-    paddingVertical: 4,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#00000015",
-  },
-  detailLabel: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: "#000000dd",
-    textTransform: "capitalize",
-
-  },
-  detailValue: {
-    fontSize: 18,
-    fontWeight: "400",
-    color: "#000000ff",
-    textAlign: "right",
-    maxWidth: "100%",
-    paddingHorizontal: 4, 
-    paddingVertical:2
-    //    borderColor:'black',
-    // borderWidth:1
-  },
-   copyContainer: {
-    flexDirection: 'row',
-    alignItems: "center",
- 
-  },
+detailRow: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center", // Ensure vertical alignment
+  marginBottom: 12,
+  paddingVertical: 4,
+  borderBottomWidth: 0.5,
+  borderBottomColor: "#00000015",
+  //  borderWidth: 1, // Debug
+  // borderColor: "red", // Debug
+},
+detailLabel: {
+    textAlign: "left",
+  fontSize: 18,
+  fontWeight: "500",
+  color: "#000000dd",
+  textTransform: "capitalize",
+  maxWidth:'50%',
+  flex: 1, // Takes up available space
+  marginRight: 8, // Add some spacing between label and value
+  //  borderWidth: 1, // Debug
+  // borderColor: "red", // Debug
+},
+detailValue: {
+  fontSize: 18,
+  fontWeight: "400",
+  color: "#000000ff",
+  textAlign: "right",
+  flex: 1, // Takes remaining space
+  overflow: "hidden", // Hides overflow
+  numberOfLines: 1, // Limits to one line
+  ellipsizeMode: "tail", // Adds ... at the end
+  //  borderWidth: 1, // Debug
+  // borderColor: "red", // Debug
+},
+copyContainer: {
+  flexDirection: 'row',
+  alignItems: "center",
+  flexShrink: 1, // Ensures the container shrinks
+  maxWidth: "50%", // Limits the width
+  //  borderWidth: 1, // Debug
+  // borderColor: "red", // Debug
+},
   copyIcon: {
-    marginLeft: 2,
+    marginLeft: 4,
   },
   viewerContainer: {
     flex: 1,
