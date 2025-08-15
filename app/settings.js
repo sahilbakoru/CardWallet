@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import LikeButton from './components/LikeButton';
 
 export default function SettingsScreen() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -53,6 +54,7 @@ export default function SettingsScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={[styles.headerText, isDarkMode && styles.darkText]}>Settings</Text>
+          <LikeButton size={100}  />
           {/* <TouchableOpacity>
             <Ionicons 
               name="notifications-outline" 

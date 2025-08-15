@@ -24,6 +24,7 @@ import {
 } from "react-native";
 import ImageView from "react-native-image-viewing";
 import EditCardModal from './components/EditCardModal';
+import LikeButton from './components/LikeButton';
 import ShareModal from './components/ShareModal';
 
 const { width } = Dimensions.get("window");
@@ -350,7 +351,7 @@ return (
   <View style={styles.detailsContainer}>
   <View style={styles.cardHeader}>
     <MaterialIcons name="wallet" size={35} color="black" /><Text style={styles.cardTitle}>{card.title || "Untitled"}</Text>
-    {/* <View style={styles.statusIndicator} /> */}
+   <View style={{marginLeft:'5%'}}><LikeButton  size={100}  /></View>
   </View>
   <View style={styles.cardBody}>
     {/* Type Row */}
@@ -510,7 +511,7 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 15,
     borderBottomWidth: 1,
