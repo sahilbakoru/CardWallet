@@ -24,7 +24,7 @@ import {
 } from "react-native";
 import ImageView from "react-native-image-viewing";
 import EditCardModal from './components/EditCardModal';
-import LikeButton from './components/LikeButton';
+import ActionModal from './components/LikeButton';
 import ShareModal from './components/ShareModal';
 
 const { width } = Dimensions.get("window");
@@ -40,7 +40,10 @@ export default function CardDetails() {
   const [visible, setIsVisible] = useState(false);
   const [copiedItem, setCopiedItem] = useState(null);
 const [modalVisible, setModalVisible] = useState(false);
+const [likeModalVisible, setLikeModalVisible] = useState(false);
+const [deleteAnimation, setDeleteAnimation]= useState(false);
 const [editModalVisible, setEditModalVisible] = useState(false);
+const [isLiked, setIsLiked] = useState(card?.isLiked || false);
   const backgroundImage = require("../assets/Backround/CardBackround.png");
   // Prepare images array
   const images = [];
@@ -63,6 +66,7 @@ useFocusEffect(
         const found = parsed.find((doc) => doc.id === id);
         console.log(found,'card details')
         setCard(found);
+        setIsLiked(found?.isLiked || false); 
           setIsFront(true);
       flipAnim.setValue(0); 
       } catch (e) {
@@ -82,7 +86,9 @@ useFocusEffect(
       setCopiedItem(null);
       setModalVisible(false);
       setEditModalVisible(false);
-
+      setLikeModalVisible(false)
+    setDeleteAnimation(false)
+    setIsLiked(false); 
       const fetchCard = async () => {
         try {
           const stored = await AsyncStorage.getItem('documents');
@@ -90,6 +96,7 @@ useFocusEffect(
           const found = parsed.find((doc) => doc.id === id);
           if (found) {
             setCard(found);
+            setIsLiked(found?.isLiked || false);
           } else {
             Alert.alert('Error', 'Card not found');
             router.back();
@@ -174,7 +181,26 @@ const triggerFlip = () => {
 
   setIsFront(!isFront);
 };
+// Add handleLike function to toggle like state
+const handleLike = async () => {
+  if(!isLiked) {setLikeModalVisible(true)}
 
+  try {
+    const newLikeState = !isLiked;
+    setIsLiked(newLikeState);
+    
+    // Update AsyncStorage with new isLiked value
+    const stored = await AsyncStorage.getItem('documents');
+    const parsed = stored ? JSON.parse(stored) : [];
+    const updatedDocs = parsed.map((doc) =>
+      doc.id === id ? { ...doc, isLiked: newLikeState } : doc
+    );
+    await AsyncStorage.setItem('documents', JSON.stringify(updatedDocs));
+  } catch (e) {
+    console.error('Failed to update like status:', e);
+    Alert.alert('Error', 'Failed to update like status');
+  }
+};
 const handleDelete = async () => {
   Alert.alert("Delete", "Are you sure you want to delete this card?", [
     { text: "Cancel", style: "cancel" },
@@ -203,9 +229,16 @@ const handleDelete = async () => {
           // Remove the card from storage
           const updated = parsed.filter((doc) => doc.id !== id);
           await AsyncStorage.setItem("documents", JSON.stringify(updated));
-
-          router.back();
+           setDeleteAnimation(true)
+            const timer = setTimeout(() => {
+        router.back();
+      }, 4000);
+      return () => clearTimeout(timer); // Cleanup timer
+        
+          
         } catch (e) {
+          setLikeModalVisible(false)
+          alert("Something went wrong !")
           console.error("Failed to delete card and images:", e);
         }
       },
@@ -235,10 +268,10 @@ const handleSaveCard = async (updatedCard) => {
     const stored = await AsyncStorage.getItem('documents');
     const parsed = stored ? JSON.parse(stored) : [];
     const updatedDocs = parsed.map((doc) =>
-      doc.id === id ? { ...updatedCard, id, timestamp: doc.timestamp, frontImage: doc.frontImage, backImage: doc.backImage } : doc
+      doc.id === id ? { ...updatedCard, id, timestamp: doc.timestamp, frontImage: doc.frontImage, backImage: doc.backImage, isLiked: doc.isLiked } : doc
     );
     await AsyncStorage.setItem('documents', JSON.stringify(updatedDocs));
-    setCard(updatedCard); // Update local state to reflect changes
+    setCard(updatedCard);
     setEditModalVisible(false);
   } catch (e) {
     console.error('Failed to update card:', e);
@@ -351,7 +384,17 @@ return (
   <View style={styles.detailsContainer}>
   <View style={styles.cardHeader}>
     <MaterialIcons name="wallet" size={35} color="black" /><Text style={styles.cardTitle}>{card.title || "Untitled"}</Text>
-   <View style={{marginLeft:'5%'}}><LikeButton  size={100}  /></View>
+   <View style={{marginLeft:'5%'}}>
+    <TouchableOpacity onPress={handleLike}>
+        <Text>
+          {isLiked ? <AntDesign name="heart" size={24} color="rgba(255, 0, 55, 1)" /> : <AntDesign name="hearto" size={24} color="black" />}
+        </Text>
+      </TouchableOpacity>
+    <ActionModal        
+         visible={likeModalVisible}
+        onClose={() => setLikeModalVisible(false)}
+        actionType={"like"} size={100} time={1500}  />
+        </View>
   </View>
   <View style={styles.cardBody}>
     {/* Type Row */}
@@ -412,7 +455,7 @@ return (
 
         <Text style={styles.text}>Card ID: {id}</Text>
 
-        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+        <TouchableOpacity style={styles.deleteButton} onPress={()=> handleDelete()}>
   <AntDesign name="delete" size={22} color="red" /><Text style={styles.deleteText}>Delete Card</Text>
         </TouchableOpacity>
  <ShareModal
@@ -420,6 +463,10 @@ return (
   onClose={() => setModalVisible(false)}
   card={card} 
 />
+<ActionModal        
+         visible={deleteAnimation}
+        onClose={() => setDeleteAnimation(false)}
+        actionType={"delete"} size={100} time={4000}  />
       </View>
      
     </LinearGradient>
